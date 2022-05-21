@@ -12,8 +12,18 @@ exports.delShoppingCar = async (req, res) => {
   res.send({})
 }
 
+exports.altShoppingCar = async (req, res) => {
+  console.log(req.body)
+  await ShoppingCar.update({ num: req.body.num }, {
+    where: {
+      username: req.user.username,
+      goodId: req.body.goodId
+    }
+  })
+  res.send({ })
+}
+
 exports.addShoppingCar = async (req, res) => {
-  // console.log(req.user)
   const shoppingCars = await ShoppingCar.findAll({
     where: {
       username: req.user.username,

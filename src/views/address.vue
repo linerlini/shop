@@ -9,7 +9,7 @@
     <van-address-list
       v-model="chosenAddressId"
       :list="list"
-      @select="onSelect(item, index)"
+      @select="onSelect(item,index)"
       @add="onAdd"
       @edit="onEdit(item)"
     />
@@ -78,9 +78,11 @@ const onEdit = () => {
     })
 }
 
-const onSelect = () => {
-  store.commit('setAddress', list.value.find((e) => e.id === chosenAddressId.value))
-  router.go(-1)
+const onSelect = (a, b) => {
+  setTimeout(() => {
+    store.commit('setAddress', list.value.find((e) => e.id === chosenAddressId.value))
+    router.go(-1)
+  }, 0)
 }
 
 const back = () => {
@@ -95,9 +97,13 @@ const back1 = () => {
 (async () => {
   list.value = await getAddress()
   if (list.value.length) {
-    chosenAddressId.value = list.value[0].id
+    if (store.state.address.id) {
+      chosenAddressId.value = store.state.address.id
+    } else {
+      chosenAddressId.value = list.value[0].id
+      store.commit('setAddress', list.value[0])
+    }
   }
-  console.log(list.value)
 })()
 </script>
 <style lang="scss" scoped>

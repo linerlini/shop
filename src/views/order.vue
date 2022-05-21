@@ -44,7 +44,7 @@
     <div class="shuoming2">
       <div class="oneline">
         <div class="left">商品金额</div>
-        <div class="right">{{ '￥' + totalPrice }}</div>
+        <div class="right">{{ '￥' + (totalPrice / 100).toFixed(2) }}</div>
       </div>
       <div class="oneline">
         <div class="left">优惠金额</div>
@@ -56,7 +56,7 @@
       </div>
       <van-field v-model="remark" label="备注" placeholder="请输入备注" />
     </div>
-    <van-submit-bar :price="totalPrice * 100" button-text="提交订单" @submit="onSubmit" :disabled="!ban" />
+    <van-submit-bar :price="totalPrice" button-text="提交订单" @submit="onSubmit" :disabled="!ban" />
   </div>
 </template>
 <script setup>
@@ -73,7 +73,7 @@ const ban = computed(() => store.state.address.name)
 const remark = ref('')
 const address = computed(() => store.state.address)
 const orders = computed(() => store.state.orders)
-const totalPrice = computed(() => orders.value.reduce((next, cur) => next + cur.price * cur.num, 0))
+const totalPrice = computed(() => orders.value.reduce((next, cur) => next + cur.price * cur.num, 0) * 100)
 
 const selectAddress = () => {
   router.push({

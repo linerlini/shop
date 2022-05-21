@@ -6,22 +6,23 @@
       v-model="username"
       name="用户名"
       label="用户名"
-      placeholder="用户名"
-      :rules="[{ pattern1, required: true, message: '请填写用户名,6-10位数字' }]"
+      placeholder="6-10位数字"
+      :rules="[{ pattern:pattern1, required: true, message: '请填写用户名,6-10位数字' }]"
     />
     <van-field
       v-model="password"
       type="password"
       name="密码"
       label="密码"
-      placeholder="密码"
-      :rules="[{ pattern2, required: true, message: '请填写密码,6-10位数字字母组成,必须包含数字、大小写字母' }]"
+      placeholder="6-10位,含数字、大小写"
+      :rules="[{ pattern:pattern2, required: true, message: '请填写密码,6-10位数字字母组成,必须包含数字、大小写字母' }]"
     />
     <van-field
+      v-model="password2"
       type="password"
       name="确认密码"
       label="确认密码"
-      placeholder="确认密码"
+      placeholder="请再次确认密码"
       :rules="[{ validator, required: true, message: '两次密码输入不一致'}]"
     />
   </van-cell-group>
@@ -49,6 +50,7 @@ const router = useRouter()
 const store = useStore()
 const username = ref('')
 const password = ref('')
+const password2 = ref('')
 const pattern1 = /\d{6,10}/
 const pattern2 = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z]){6,10}/
 

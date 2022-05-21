@@ -7,10 +7,12 @@
 <script setup>
 import { ref, onBeforeUnmount } from 'vue'
 import { BrowserMultiFormatReader } from '@zxing/library'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { Dialog } from 'vant'
+// import { addShoppingCar } from '../../../server/good'
 
 const router = useRouter()
+const route = useRoute()
 const codeReader = ref(new BrowserMultiFormatReader())
 const tipMsg = ref('正在尝试识别')
 const tipShow = ref(false)
@@ -57,6 +59,11 @@ const decodeFromInputVideoFunc = (firstDeviceId) => {
         router.push({
           path
         })
+        setTimeout(() => {
+          console.log(router)
+          console.log(route)
+        }, 0)
+        // addShoppingCar(route)
         codeReader.value.reset()
       } else {
         // console.log(2)

@@ -22,8 +22,8 @@
   <div class="title">
     <span class="price">
       ¥
-      <em>188</em>
-      <span class="price_decimals">.00</span>
+      <em>{{~~goodDetail.price}}</em>
+      <span class="price_decimals">{{('.'+(goodDetail.price*100-100*(~~goodDetail.price))).padEnd(3, '0')}}</span>
     </span>
     <div class="name">{{goodDetail.title}}</div>
   </div>
@@ -78,6 +78,10 @@
       <van-button type="primary" size="small" @click="addOrder" block round color="#00AFEC">确定</van-button>
     </div>
   </van-action-sheet>
+  <div ref="qr" v-show="false">
+  <qrcodevue  :value="url" level="L" size="75" />
+  <!-- <button @click="downloadQrCode">Download</button> -->
+</div>
   </div>
 </template>
 <script setup>
@@ -92,6 +96,7 @@ import actionBar from '../components/actionBar/actionBar'
 import { useRouter, useRoute } from 'vue-router'
 import { getComment, getGoodDetail } from '../../server/good'
 import { useStore } from 'vuex'
+import qrcodevue from 'qrcode.vue'
 
 import commentDetailVue from './comment_detail.vue'
 
@@ -104,6 +109,8 @@ const is = ref(false)
 const fullScreen = ref(false)
 const showAction = ref(false)
 const num = ref(1)
+const qr = ref(null)
+const url = ref(location.href)
 
 watch(() => route.params.id, async (newId) => {
   is.value = false
@@ -196,7 +203,27 @@ const options = [
 ]
 
 const onSelect = (option) => {
-  Toast(option.name)
+  if (option.name === '二维码') {
+    const url = qr.value.getElementsByTagName('canvas')[0].toDataURL('image/png')
+    // const url = canvas.toDataURL("image/png") // 通过 toDataURL 返回一个包含图片展示的 data URI
+    const aDom = document.createElement('a')
+    aDom.download = 'haha'// 设置下载的文件名
+    aDom.href = url
+    // document.body.appendChild(aDom)
+    aDom.click()
+    aDom.remove()
+    Toast('二维码已保存到相册')
+    return
+  }
+  const input = document.createElement('input')
+  document.body.appendChild(input)
+  input.setAttribute('value', location.href)
+  input.select()
+  if (document.execCommand('copy')) {
+    document.execCommand('copy')
+  }
+  document.body.removeChild(input)
+  Toast('已经复制链接，快去分享吧')
   showShare.value = false
 }
 

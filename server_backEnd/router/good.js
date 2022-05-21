@@ -22,6 +22,8 @@ router.post('/addShoppingCar', jwt, goodHandler.addShoppingCar)
 
 router.post('/delShoppingCar', jwt, goodHandler.delShoppingCar)
 
+router.post('/altShoppingCar', jwt, goodHandler.altShoppingCar)
+
 router.post('/getShoppingCar', jwt, goodHandler.getShoppingCar)
 
 router.get('/getComment', goodHandler.getComment)

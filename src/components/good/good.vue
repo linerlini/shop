@@ -1,15 +1,15 @@
 <template>
-      <ul class="goods" @click="selectItem">
-        <li class="good" v-for=" (item,index) in props.lists" :key="index">
+      <ul class="goods">
+        <li class="good" v-for=" (item,index) in props.lists" :key="index" @click="selectItem(item)">
             <img v-lazy="item.src[0]" alt="">
             <div class="title">
                 <span class="text">{{item.title}}</span>
             </div>
             <span class="price">
                 <span style="font-size: 13.7322px;">￥</span><span>{{~~item.price}}</span>
-                <span style="font-size: 13.7322px;">{{'.'+(item.price*100-100*(~~item.price))}}</span>
+                <span style="font-size: 13.7322px;">{{('.'+(item.price*100-100*(~~item.price))).padEnd(3, '0')}}</span>
             </span>
-            <img :data-img="index" class="icon" src="https://m.360buyimg.com/babel/s48x48_jfs/t1/126761/1/18665/5729/60af425cE207c7fdc/7605ddf95a621f6c.png.webp" alt="">
+            <img :data-img="index" @click.stop="addIconCar(item)" class="icon" src="https://m.360buyimg.com/babel/s48x48_jfs/t1/126761/1/18665/5729/60af425cE207c7fdc/7605ddf95a621f6c.png.webp" alt="">
         </li>
     </ul>
 </template>
@@ -18,6 +18,7 @@ import { defineProps, computed } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 import { addShoppingCar } from '../../../server/good'
+import { Toast } from 'vant'
 
 const store = useStore()
 const router = useRouter()
@@ -25,38 +26,43 @@ const token = computed(() => store.state.token)
 const props = defineProps({
   lists: Array
 })
-// const selectItem = (item) => {
-//   router.push({
-//     path: `/good/${item.id}`
-//     // params: {
-//     //   id: item.id
-//     // }
-//   })
-// }
-// const addIconCar = (item) => {
-//   if (token.value.length !== 0) {
-//     addShoppingCar(item)
-//   } else {
-//     router.push({
-//       path: '/login'
-//     })
-//   }
-// }
-const selectItem = (e) => {
-  if (e.target.dataset.img + 1) {
-    if (token.value.length !== 0) {
-      addShoppingCar(props.lists[e.target.dataset.img])
-    } else {
-      router.push({
-        path: '/login'
-      })
-    }
-    return
-  }
+const selectItem = (item) => {
   router.push({
-    path: `/good/${props.lists[e.target.dataset.li].id}`
+    path: `/good/${item.id}`
+    // params: {
+    //   id: item.id
+    // }
   })
 }
+const addIconCar = (item) => {
+  if (token.value.length !== 0) {
+    addShoppingCar(item)
+  } else {
+    Toast({
+      message: '请先登录',
+      duration: 1000,
+      forbidClick: true
+    })
+    router.push({
+      path: '/login'
+    })
+  }
+}
+// const selectItem1 = (e) => {
+//   if (e.target.dataset.img + 1) {
+//     if (token.value.length !== 0) {
+//       addShoppingCar(props.lists[e.target.dataset.img])
+//     } else {
+//       router.push({
+//         path: '/login'
+//       })
+//     }
+//     return
+//   }
+//   router.push({
+//     path: `/good/${props.lists[e.target.dataset.li].id}`
+//   })
+// }
 
 </script>
 <style lang="scss" scoped>

@@ -16,6 +16,10 @@ export function getShoppingCar () {
   return post('/api/getShoppingCar')
 }
 
+export function altShoppingCar (item) {
+  return post('/api/altShoppingCar', item)
+}
+
 export function getGoodDetail (id) {
   return get('/api/getGoodDetail', id)
 }

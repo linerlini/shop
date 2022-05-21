@@ -24,8 +24,8 @@
       </div>
       <div class="searchContent" v-show="query">
         <van-dropdown-menu v-show="result.length" style="margin-bottom: 15px">
-          <van-dropdown-item v-model="value1" :options="option1" />
-          <van-dropdown-item v-model="value2" :options="option2" />
+          <van-dropdown-item v-model="value1" :options="option1" disabled />
+          <van-dropdown-item v-model="value2" :options="option2"  @change="onChange"/>
           </van-dropdown-menu>
         <goodVue :lists="result"></goodVue>
         <van-empty image="search" v-show="!result.length" description="暂无搜索结果" />
@@ -55,7 +55,7 @@ const option1 = [
 ]
 const option2 = [
   { text: '默认排序', value: 'a' },
-  { text: '好评排序', value: 'b' },
+  { text: '价格排序', value: 'b' },
   { text: '销量排序', value: 'c' }
 ]
 const searchRecommend = [
@@ -68,9 +68,16 @@ const key1 = ref(0)
 const query = ref('')
 const result = ref([])
 const onSearch = async () => {
+  if (query.value === '') {
+    return
+  }
   saveSearch(query.value)
   result.value = await getSearch({ keyword: query.value })
   // console.log(result.value)
+}
+
+const onChange = () => {
+
 }
 
 const addQuery = async (item) => {
@@ -111,7 +118,8 @@ const clickRight2 = () => {
 .search {
   position: fixed;
   width: 100%;
-  height: 100%;
+  min-height: 100%;
+  z-index: 1003;
   background-color: rgb(246,246,246);
   .searchHistory, .searchRecommend {
     margin: 0 auto;

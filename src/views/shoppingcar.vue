@@ -1,6 +1,6 @@
 <template>
   <div class="cart-container" v-if="cartList.length">
-  <div class="vv">购物车</div>
+  <div class="vv">购物车 <span class="btn-del" @click="remove"><van-icon name="delete-o" /></span></div>
     <div class="cart-list">
       <div class="item" v-for="item in cartList" :key="item.id">
         <div class="button1">
@@ -14,11 +14,10 @@
         <div class="det">
           <div class="title">
             <div class="title1">{{ item.title }}</div>
-            <div class="btn-del" @click="remove(item)"><van-icon name="delete-o" /></div>
           </div>
           <div class="second">
-            <div class="price">￥{{ item.price }}</div>
-            <div class="num"><van-stepper v-model="item.num" /></div>
+            <div class="price">￥{{ item.price * 1 }}</div>
+            <div class="num"><van-stepper v-model="item.num"  @change="debChangeNum({num: item.num, goodId: item.id})"/></div>
           </div>
         </div>
       </div>
@@ -31,12 +30,13 @@
 </template>
 <script setup>
 import { onMounted, ref, computed } from 'vue'
-// import { useStore } from 'vuex'
-import { Checkbox as vanCheckbox, Icon as vanIcon, Empty as vanEmpty, Stepper as vanStepper, SubmitBar as vanSubmitBar, Dialog } from 'vant'
+import { useStore } from 'vuex'
+import { Toast, Checkbox as vanCheckbox, Icon as vanIcon, Empty as vanEmpty, Stepper as vanStepper, SubmitBar as vanSubmitBar, Dialog } from 'vant'
 import { useRouter } from 'vue-router'
-import { getShoppingCar, delShoppingCar } from '../../server/good'
-import store from '../store'
-// const store = useStore()
+import { getShoppingCar, delShoppingCar, altShoppingCar } from '../../server/good'
+import { debounce } from '../assets/js/util'
+
+const store = useStore()
 const router = useRouter()
 const cartList = ref([])
 const checked = ref(false)
@@ -60,34 +60,59 @@ const clickCheck = () => {
     })
   }
 }
-const remove = async (item) => {
-  if (!checked.value) {
-    Dialog.confirm({
-      message:
-    '确定删除该商品吗？'
+
+const changeNum = async (value) => {
+  if (value.num !== '') {
+    const toast = Toast.loading({
+      message: '加载中...',
+      forbidClick: true,
+      loadingType: 'spinner'
     })
-      .then(() => {
-        cartList.value = cartList.value.filter((e) => e.id !== item.id)
-        delShoppingCar(item)
-      })
-      .catch(() => {
-        // on cancel
-      })
-  } else {
-    Dialog.confirm({
-      message:
-    '确定清空购物车吗？'
-    })
-      .then(() => {
-        cartList.value.forEach(async (e) => {
-          await delShoppingCar(e)
-        })
-        cartList.value = []
-      })
-      .catch(() => {
-        // on cancel
-      })
+    await altShoppingCar(value)
+    toast.clear()
   }
+}
+
+const debChangeNum = debounce(changeNum, 500)
+
+const remove = async () => {
+  if (cartList.value.every((e) => !e.isCheck)) {
+    Dialog.alert({
+      message: '选中商品后点击可将商品移出购物车'
+    }).then(() => {
+      // on close
+    })
+    return
+  }
+  Dialog.confirm({
+    message:
+    '确定删除选中的商品吗？'
+  })
+    .then(async () => {
+      const toast = Toast.loading({
+        message: '加载中...',
+        forbidClick: true,
+        loadingType: 'spinner'
+      })
+      await new Promise((resolve, reject) => {
+        const delList = cartList.value.filter((e) => e.isCheck)
+        const length = delList.length
+        let count = 0
+        delList.forEach(async (e) => {
+          await delShoppingCar(e)
+          count++
+          if (count === length) {
+            resolve()
+          }
+        })
+      })
+
+      cartList.value = cartList.value.filter((e) => !e.isCheck)
+      toast.clear()
+    })
+    .catch(() => {
+      // on cancel
+    })
 }
 const toggleCheck = (data) => {
   data.isCheck = !data.isCheck
@@ -122,6 +147,11 @@ const onSubmit = () => {
   text-align: center;
   line-height: 45px;
   color: #666666;
+  .btn-del {
+            position: absolute;
+            right: 15px;
+            top: 0;
+          }
 }
 .van-submit-bar {
   bottom: 50px;
@@ -157,11 +187,6 @@ const onSubmit = () => {
             margin-bottom: 4px;
             font-size: 15px;
             width: 85%;
-          }
-          .btn-del {
-            position: absolute;
-            right: 0;
-            top: 0;
           }
         }
         .second {
