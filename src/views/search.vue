@@ -6,6 +6,9 @@
           v-model="query"
           placeholder="请输入搜索关键词"
           @search="onSearch"
+          @focus="onFocus"
+          @blur="onBlur"
+          @update:model-value="debOnUpdate(query)"
           background="rgb(0,175,236)"
           shape="round"
         />
@@ -22,7 +25,10 @@
           <van-tag size="medium" @click="addQuery(item)" round class="tag" color="#999999" v-for="(item,index) in searchRecommend[key1]" :key="index">{{item}}</van-tag>
         </div>
       </div>
-      <div class="searchContent" v-show="query">
+      <div class="words" v-show="query && isFocus" v-for="(item, index) in words" :key="index">
+        <div class="word" v-html="item"></div>
+      </div>
+      <div class="searchContent" v-show="query && !isFocus">
         <van-dropdown-menu v-show="result.length" style="margin-bottom: 15px">
           <van-dropdown-item v-model="value1" :options="option1" disabled />
           <van-dropdown-item v-model="value2" :options="option2"  @change="onChange"/>
@@ -37,8 +43,9 @@ import { Search as vanSearch, Tag as vanTag, Dialog, DropdownMenu as vanDropdown
 import { ref, nextTick, computed, onMounted } from 'vue'
 import useSearchHistory from '../../src/assets/js/use-search-history'
 import { useStore } from 'vuex'
-import { getSearch } from '../../server/search'
+import { getSearch, getAssociateWord } from '../../server/search'
 import goodVue from '../components/good/good.vue'
+import { debounce } from '../assets/js/util'
 
 const store = useStore()
 const searchHistory = computed(() => store.state.searchHistory)
@@ -48,6 +55,7 @@ const { saveSearch, clearSearch } = useSearchHistory()
 
 const value1 = ref(0)
 const value2 = ref('a')
+const isFocus = ref(false)
 const option1 = [
   { text: '全部商品', value: 0 },
   { text: '新款商品', value: 1 },
@@ -67,6 +75,8 @@ const searchRecommend = [
 const key1 = ref(0)
 const query = ref('')
 const result = ref([])
+const AssociateWords = ref([])
+const words = ref([])
 const onSearch = async () => {
   if (query.value === '') {
     return
@@ -76,9 +86,34 @@ const onSearch = async () => {
   // console.log(result.value)
 }
 
+const onFocus = () => {
+  isFocus.value = true
+}
+
+const onBlur = () => {
+  isFocus.value = false
+}
+
 const onChange = () => {
 
 }
+
+const onUpdate = async (value) => {
+  words.value = []
+  if (value === '') {
+    return
+  }
+  AssociateWords.value = await getAssociateWord({ keyword: value })
+  console.log(AssociateWords.value.keyword)
+  if (AssociateWords.value.keyword === query.value) {
+    const str = `<font color='#00AFEC'>${AssociateWords.value.keyword}</font>`
+    AssociateWords.value.result.forEach((e) => {
+      words.value.push(e.keyword.replace(AssociateWords.value.keyword, str))
+    })
+  }
+}
+
+const debOnUpdate = debounce(onUpdate, 1000)
 
 const addQuery = async (item) => {
   query.value = item
@@ -121,6 +156,16 @@ const clickRight2 = () => {
   min-height: 100%;
   z-index: 1003;
   background-color: rgb(246,246,246);
+  .words {
+    padding: 10px;
+    border-bottom: 1px solid rgba(38, 38, 38, 0.2);
+    .word {
+      line-height: 13px;
+      // height: 16px;
+      font-size: 13px;
+      color: rgb(38, 38, 38);
+    }
+  }
   .searchHistory, .searchRecommend {
     margin: 0 auto;
     width: 90%;

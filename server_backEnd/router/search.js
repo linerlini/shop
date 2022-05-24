@@ -1,9 +1,41 @@
-const { Good } = require('../db/model')
+const { Good, AssociateWord } = require('../db/model')
+const { Op } = require('sequelize')
 
 const express = require('express')
 const router = express.Router()
 
+router.get('/getAssociateWord', async (req, res) => {
+  const result = await AssociateWord.findAll({
+    where: {
+      keyword: {
+        [Op.substring]: req.query.keyword
+      }
+    },
+    order: [
+      ['num', 'DESC']
+    ]
+  })
+  let arr = []
+  result.forEach((e) => {
+    arr.push(e)
+  })
+  arr = arr.slice(0, 9)
+  res.send({ result: arr, keyword: req.query.keyword })
+})
+
 router.get('/getSearch', async (req, res) => {
+  const keyword = await AssociateWord.findAll({
+    where: {
+      keyword: req.query.keyword
+    }
+  })
+  if (keyword.length === 0) {
+    console.log('2')
+    await AssociateWord.create({ keyword: req.query.keyword, num: 1 })
+  } else {
+    console.log('1')
+    await AssociateWord.increment({ num: 1 }, { where: { keyword: req.query.keyword } })
+  }
   const goods = await Good.findAll({
     attributes: ['id', 'title', 'price', 'src']
   })

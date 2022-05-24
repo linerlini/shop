@@ -38,7 +38,7 @@
 </div>
 </template>
 <script setup>
-import { Form as vanForm, Field as vanField, CellGroup as vanCellGroup, Button as vanButton } from 'vant'
+import { Toast, Form as vanForm, Field as vanField, CellGroup as vanCellGroup, Button as vanButton } from 'vant'
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { register } from '../../server/login'
@@ -65,7 +65,13 @@ const onClose = () => {
 }
 const onSuccess = async () => {
   onClose() // 验证成功，需要手动关闭模态框
+  const toast = Toast.loading({
+    message: '注册中...',
+    forbidClick: true,
+    loadingType: 'spinner'
+  })
   const result = await register({ username: username.value, password: password.value })
+  toast.clear()
   if (result.status === 1) {
     // localStorage.setItem('__token__', result.token)
     saveAll(TOKEN_KEY, result.token)

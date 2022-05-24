@@ -68,6 +68,17 @@ const ShoppingCar = db.define('ShoppingCar', {
   timestamps: false
 })
 
+const AssociateWord = db.define('AssociateWord', {
+  keyword: {
+    type: DataTypes.STRING,
+    primaryKey: true
+  },
+  num: {
+    type: DataTypes.INTEGER
+  }
+}, {
+  timestamps: false
+})
 const Comment = db.define('Comment', {
   username: {
     type: DataTypes.STRING
@@ -154,6 +165,7 @@ ShoppingCar.sync({ alert: true })
 Comment.sync({ alert: true })
 Address.sync({ alert: true })
 Order.sync({ alert: true })
+AssociateWord.sync({ alert: true })
 
 // Address.create({ username: '123456', tel: '15565', address: '44464464', name: 'acdz' })
 // Comment.create({
@@ -200,5 +212,6 @@ module.exports = {
   ShoppingCar,
   Comment,
   Address,
-  Order
+  Order,
+  AssociateWord
 }

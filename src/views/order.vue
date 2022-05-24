@@ -60,7 +60,7 @@
   </div>
 </template>
 <script setup>
-import { NavBar as vanNavBar, Icon as vanIcon, Field as vanField, SubmitBar as vanSubmitBar } from 'vant'
+import { NavBar as vanNavBar, Icon as vanIcon, Field as vanField, SubmitBar as vanSubmitBar, Toast } from 'vant'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import { computed, ref } from 'vue'
@@ -82,6 +82,11 @@ const selectAddress = () => {
 }
 
 const onSubmit = async () => {
+  const toast = Toast.loading({
+    message: '加载中...',
+    forbidClick: true,
+    loadingType: 'spinner'
+  })
   await new Promise((resolve, reject) => {
     const { length } = orders.value
     let count = 0
@@ -104,7 +109,7 @@ const onSubmit = async () => {
       }
     })
   })
-
+  toast.clear()
   store.commit('setOrders', [])
   // router.push({
   //   path: '/shoppingcar'
