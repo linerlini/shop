@@ -2,17 +2,17 @@
   <div class="address">
     <div class="list" v-if="!show">
       <van-nav-bar
-    title="地址列表"
-    left-arrow
-    @click="back"
-  />
-    <van-address-list
-      v-model="chosenAddressId"
-      :list="list"
-      @select="onSelect(item,index)"
-      @add="onAdd"
-      @edit="onEdit(item)"
-    />
+        title="地址列表"
+        left-arrow
+        @click="back"
+      />
+      <van-address-list
+        v-model="chosenAddressId"
+        :list="list"
+        @select="onSelect(item,index)"
+        @add="onAdd"
+        @edit="onEdit(item)"
+      />
     </div>
     <div class="elseList" v-if="show">
       <van-nav-bar

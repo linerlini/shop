@@ -3,16 +3,16 @@ import { computed } from 'vue'
 import { save, remove } from '../../assets/js/storage'
 import { FAVORITE_KEY } from '../../assets/js/constant'
 
-export default function useFavorite () {
+export default function useFavorite() {
   const store = useStore()
   const favoriteList = computed(() => store.state.favoriteList)
   const maxLen = 100
 
-  function getFavoriteIcon (song) {
+  function getFavoriteIcon(song) {
     return isFavorite(song) ? '#00AFEC' : '#323233'
   }
 
-  function toggleFavorite (song) {
+  function toggleFavorite(song) {
     let list
     if (isFavorite(song)) {
       list = remove(FAVORITE_KEY, compare)
@@ -21,19 +21,21 @@ export default function useFavorite () {
     }
     store.commit('setFavoriteList', list)
 
-    function compare (item) {
+    function compare(item) {
       return item.id === song.id
     }
   }
 
-  function isFavorite (song) {
-    return favoriteList.value.findIndex((item) => {
-      return item.id === song.id
-    }) > -1
+  function isFavorite(song) {
+    return (
+      favoriteList.value.findIndex((item) => {
+        return item.id === song.id
+      }) > -1
+    )
   }
 
   return {
     getFavoriteIcon,
-    toggleFavorite
+    toggleFavorite,
   }
 }

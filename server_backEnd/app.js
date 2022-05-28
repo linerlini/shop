@@ -1,9 +1,7 @@
 const express = require('express')
 const cors = require('cors')
 const bodyParser = require('body-parser')
-// const joi = require('@hapi/joi')
 const jsonwebtoken = require('jsonwebtoken')
-// const { expressJWT } = require('express-jwt')
 
 const app = express()
 
@@ -21,10 +19,6 @@ app.use(jsonParser, (req, res, next) => {
   console.log(req.body)
   next()
 })
-
-// app.use(expressJWT({ secret: config.jwtSecretKey }), (req, res, next) => {
-//   console.log(req.user)
-// })
 
 app.use('/api', userRouter)
 app.use('/api', lunboRouer)

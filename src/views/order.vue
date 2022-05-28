@@ -19,7 +19,7 @@
     <div class="goods">
       <div class="good" v-for="(item, index) in orders" :key="index">
         <div class="img_wrapper">
-          <img :src="item.src[0]" alt="">
+          <img :src="item.src[0]" alt="" />
         </div>
         <div class="title">
           <div class="first">{{ item.title }}</div>
@@ -77,7 +77,7 @@ const totalPrice = computed(() => orders.value.reduce((next, cur) => next + cur.
 
 const selectAddress = () => {
   router.push({
-    path: '/address'
+    path: '/address',
   })
 }
 
@@ -85,7 +85,7 @@ const onSubmit = async () => {
   const toast = Toast.loading({
     message: '加载中...',
     forbidClick: true,
-    loadingType: 'spinner'
+    loadingType: 'spinner',
   })
   await new Promise((resolve, reject) => {
     const { length } = orders.value
@@ -99,7 +99,7 @@ const onSubmit = async () => {
         name: address.value.name,
         tel: address.value.tel,
         address: address.value.address,
-        note: remark.value
+        note: remark.value,
       }
       await addOrder(a)
       await delShoppingCar(e)
@@ -131,13 +131,13 @@ const back = () => {
   z-index: 2000;
   // margin-bottom: 70px;
   position: absolute;
-  background-color: #F4F4F4;
+  background-color: #f4f4f4;
 
   .shuoming1,
   .shuoming2 {
     width: 100%;
     border-radius: 5px;
-    background-color: #FFFFFF;
+    background-color: #ffffff;
     margin-top: 15px;
 
     // margin-bottom: 70px;
@@ -165,7 +165,7 @@ const back = () => {
   .goods {
     width: 100%;
     border-radius: 5px;
-    background-color: #FFFFFF;
+    background-color: #ffffff;
     margin-top: 15px;
 
     .good {
@@ -208,7 +208,7 @@ const back = () => {
           .price {
             float: left;
             font-size: 15px;
-            color: rgb(250, 43, 26)
+            color: rgb(250, 43, 26);
           }
 
           .num {
@@ -235,7 +235,7 @@ const back = () => {
       height: 2px;
       background: repeating-linear-gradient(-45deg, #ff6c6c, #ff6c6c 20%, transparent 0, transparent 25%, #1989fa 0, #1989fa 45%, transparent 0, transparent 50%);
       background-size: 80px;
-      content: "";
+      content: '';
     }
 
     .arrow-right {

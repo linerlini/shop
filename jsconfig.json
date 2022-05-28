@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "baseUrl": "./",                                  /* Specify the base directory to resolve non-relative module names. */
+    "paths": {
+      "config/*": ["src/config/*"],
+      "assets/*": ["src/assets/*"],
+      "components/*": ["src/components/*"],
+      "utils/*": ["src/utils/*"],
+      "router/*": ["src/router/*"],
+      "server/*": ["src/server/*"],
+      "store/*": ["src/store/*"],
+      "views/*": ["src/views/*"],
+      "hooks/*": ["src/hooks/*"]
+    }, 
+  }
+}

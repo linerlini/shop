@@ -5,6 +5,6 @@
 </template>
 
 <script setup>
-import Footer from './components/footer/footer'
+import Footer from 'components/footer/footer'
 // import Qrcode from './components/qrcode/qrcode.vue'
 </script>

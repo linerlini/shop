@@ -5,7 +5,7 @@
       left-arrow
       @click="back"
     />
-      <goodVue :lists = 'favorList'></goodVue>
+      <goodVue :lists='favorList'></goodVue>
   </div>
 
 </template>

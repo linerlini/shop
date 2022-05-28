@@ -1,94 +1,54 @@
 <template>
   <div class="orderdetail">
-    <van-nav-bar
-      title="我的订单"
-      left-arrow
-      @click="back"
-    />
+    <van-nav-bar title="我的订单" left-arrow @click="back" />
     <div class="tab">
       <van-tabs v-model:active="active">
         <van-tab name="0" title="全部">
           <div class="allOrder" v-if="orders.length">
-            <van-card
-            v-for="(item,index) in orders"
-            :key="index"
-            :num="item.num"
-            :price="item.price"
-            :desc="item.title"
-            :thumb="item.img"
-          />
+            <van-card v-for="(item, index) in orders" :key="index" :num="item.num" :price="item.price" :desc="item.title" :thumb="item.img" />
           </div>
         </van-tab>
         <van-tab name="1" title="待付款">
           <div class="haha" v-if="currentOrders.length">
-            <van-card
-            v-for="(item,index) in currentOrders"
-            :key="index"
-            :num="item.num"
-            :price="item.price"
-            :desc="item.title"
-            :thumb="item.img"
-          >
-            <template #footer>
-              <van-button round plain color="#00AFEC" @click="del(item)" size="mini">取消订单</van-button>
-              <van-button round plain color="#00AFEC" size="mini" @click="upadte(item)">立即付款</van-button>
-            </template>
-          </van-card>
+            <van-card v-for="(item, index) in currentOrders" :key="index" :num="item.num" :price="item.price" :desc="item.title" :thumb="item.img">
+              <template #footer>
+                <van-button round plain color="#00AFEC" @click="del(item)" size="mini">取消订单</van-button>
+                <van-button round plain color="#00AFEC" size="mini" @click="upadte(item)">立即付款</van-button>
+              </template>
+            </van-card>
           </div>
         </van-tab>
         <van-tab name="2" title="待发货">
           <div class="haha" v-if="currentOrders.length">
-            <van-card
-            v-for="(item,index) in currentOrders"
-            :key="index"
-            :num="item.num"
-            :price="item.price"
-            :desc="item.title"
-            :thumb="item.img"
-          >
-            <template #footer>
-              <van-button round plain color="#00AFEC" size="mini" @click="del(item)">申请退款</van-button>
-            </template>
-          </van-card>
+            <van-card v-for="(item, index) in currentOrders" :key="index" :num="item.num" :price="item.price" :desc="item.title" :thumb="item.img">
+              <template #footer>
+                <van-button round plain color="#00AFEC" size="mini" @click="del(item)">申请退款</van-button>
+              </template>
+            </van-card>
           </div>
         </van-tab>
         <van-tab name="3" title="待收货">
           <div class="haha" v-if="currentOrders.length">
-            <van-card
-            v-for="(item,index) in currentOrders"
-            :key="index"
-            :num="item.num"
-            :price="item.price"
-            :desc="item.title"
-            :thumb="item.img"
-          >
-            <template #footer>
-              <van-button round plain color="#00AFEC" size="mini" @click="del(item)">申请退款</van-button>
-              <van-button round plain color="#00AFEC" size="mini" @click="upadte(item)">确认收货</van-button>
-            </template>
-          </van-card>
+            <van-card v-for="(item, index) in currentOrders" :key="index" :num="item.num" :price="item.price" :desc="item.title" :thumb="item.img">
+              <template #footer>
+                <van-button round plain color="#00AFEC" size="mini" @click="del(item)">申请退款</van-button>
+                <van-button round plain color="#00AFEC" size="mini" @click="upadte(item)">确认收货</van-button>
+              </template>
+            </van-card>
           </div>
         </van-tab>
         <van-tab name="4" title="待评价">
           <div class="haha" v-if="currentOrders.length">
-            <van-card
-            v-for="(item,index) in currentOrders"
-            :key="index"
-            :num="item.num"
-            :price="item.price"
-            :desc="item.title"
-            :thumb="item.img"
-          >
-            <template #footer>
-              <van-button round plain color="#00AFEC" size="mini">立即评价</van-button>
-            </template>
-          </van-card>
+            <van-card v-for="(item, index) in currentOrders" :key="index" :num="item.num" :price="item.price" :desc="item.title" :thumb="item.img">
+              <template #footer>
+                <van-button round plain color="#00AFEC" size="mini">立即评价</van-button>
+              </template>
+            </van-card>
           </div>
         </van-tab>
-    </van-tabs>
+      </van-tabs>
     </div>
   </div>
-
 </template>
 <script setup>
 import { NavBar as vanNavBar, Tab as vanTab, Tabs as vanTabs, Card as vanCard, Button as vanButton } from 'vant'
@@ -132,8 +92,8 @@ const upadte = async (item) => {
 .orderdetail {
   width: 100%;
   min-height: 100%;
-  z-index:2000;
+  z-index: 2000;
   position: absolute;
-  background-color: #F4F4F4;
+  background-color: #f4f4f4;
 }
 </style>
