@@ -19,7 +19,7 @@ const routes = [
   },
   {
     path: '/sort',
-    component: () => import(/* webpackChunkName: "sort" */ '../views/sort.vue'),
+    component: () => import(/* webpackChunkName: "sort" */ 'views/CategoryPage'),
   },
   {
     path: '/search',
@@ -27,18 +27,16 @@ const routes = [
   },
   {
     path: '/shoppingcar',
-    component: () => import(/* webpackChunkName: "shoppingcar" */ '../views/shoppingcar.vue'),
-    beforeEnter: () => {
-      if (store.state.token.length === 0) {
+    component: () => import(/* webpackChunkName: "shoppingcar" */ 'views/ShoppingCarPage'),
+    beforeEnter(to, from, next) {
+      if (store.state.isLogin) {
+        next()
+      } else {
         Toast('请先登录以查看购物车信息')
-
-        return {
+        next({
           path: '/login',
-        }
+        })
       }
-      return true
-
-      // reject the navigation
     },
   },
   {
@@ -47,7 +45,7 @@ const routes = [
   },
   {
     path: '/login',
-    component: () => import(/* webpackChunkName: "login" */ '../views/LoginPage.vue'),
+    component: () => import(/* webpackChunkName: "login" */ 'views/LoginPage'),
   },
   {
     path: '/register',
@@ -63,7 +61,7 @@ const routes = [
   },
   {
     path: '/address',
-    component: () => import(/* webpackChunkName: "address" */ '../views/address.vue'),
+    component: () => import(/* webpackChunkName: "address" */ 'views/AddressPage'),
   },
   {
     path: '/favor',
@@ -80,7 +78,7 @@ const router = createRouter({
   routes,
 })
 
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
   NProgress.start()
   next()
 })

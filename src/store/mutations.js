@@ -24,6 +24,7 @@ export default {
     state.token = payload.token
   },
   [UPDATE_LOGIN_STATUS](state, payload) {
+    console.log(payload)
     state.isLogin = payload.status
   },
 }

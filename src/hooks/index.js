@@ -1,7 +1,8 @@
 import { ResponseCode } from 'config/constants'
 import { computed, ref, watch } from 'vue'
 
-export function useGoodList(requestFunc, searchText) {
+const PAGE_SIZE = 20
+export function useGoodList({ requestFunc, searchText, type, goodType }) {
   const goods = ref([])
   const pageIndex = ref(0)
   // 下拉加载
@@ -19,7 +20,14 @@ export function useGoodList(requestFunc, searchText) {
       return
     }
     loadingMore.value = true
-    const result = await requestFunc(pageIndex.value + 1, searchText ? searchText.value : '')
+    console.log(goodType)
+    const result = await requestFunc({
+      searchText: searchText ? searchText.value : '',
+      type: type ? type.value : '',
+      goodType: goodType ? goodType.value : '',
+      offset: pageIndex.value * PAGE_SIZE,
+      size: PAGE_SIZE,
+    })
     if (result.code === ResponseCode.SUCCESS) {
       const { data, count: newCount } = result.data
       goods.value = [...goods.value, ...data]
@@ -37,11 +45,9 @@ export function useGoodList(requestFunc, searchText) {
     loadingMore.value = false
     count.value = 0
   }
-  watch(searchText, (newValue, oldValue) => {
-    if (newValue !== oldValue) {
-      reset()
-      handleLoadMore()
-    }
+  watch([searchText, type, goodType], () => {
+    reset()
+    handleLoadMore()
   })
   return {
     goods,

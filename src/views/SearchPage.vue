@@ -84,7 +84,10 @@ const handleClickSearchWord = async (str) => {
   queryText.value = str
   handleSearch()
 }
-const { goods, loadingMore, loadingError, finished, handleLoadMore } = useGoodList(requestSearchMain, searchText)
+const { goods, loadingMore, loadingError, finished, handleLoadMore } = useGoodList({
+  requestFunc: requestSearchMain,
+  searchText,
+})
 
 // 搜索联想词
 const associationalWords = ref([])

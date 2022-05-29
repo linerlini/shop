@@ -15,3 +15,7 @@ export async function requestRegister(account, password, userName) {
   })
   return result.data
 }
+export async function requestAutoLogin() {
+  const result = await serve.get('/user/auto')
+  return result.data
+}

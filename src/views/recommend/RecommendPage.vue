@@ -37,7 +37,9 @@ const handleClickSwipe = (id) => {
   })
 }
 // 推荐商品
-const { goods, loadingMore, loadingError, finished, handleLoadMore } = useGoodList(requestRecommendGood)
+const { goods, loadingMore, loadingError, finished, handleLoadMore } = useGoodList({
+  requestFunc: requestRecommendGood,
+})
 async function initData() {
   const result = await requestSwipeData()
   if (result.code === ResponseCode.SUCCESS) {

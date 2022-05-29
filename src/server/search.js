@@ -8,11 +8,7 @@ export async function requestSearchAssociational(keyword) {
   })
   return result.data
 }
-export async function requestSearchMain(pageIndex, searchText) {
-  const result = await serve.post('/search/main', {
-    searchText,
-    offset: (pageIndex - 1) * 20,
-    size: 20,
-  })
+export async function requestSearchMain(params) {
+  const result = await serve.post('/search/main', params)
   return result.data
 }

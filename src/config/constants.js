@@ -20,3 +20,7 @@ export const LoadStatus = {
   ERROR: 'error',
   LOADING: 'loading',
 }
+export const GoodType = {
+  FRUIT: '水果',
+  VEGETABLES: '蔬菜',
+}

@@ -1,3 +1,5 @@
+import { TOKEN_KEY } from 'assets/js/constant'
+import { load } from 'assets/js/storage'
 import axios from 'axios'
 import { ResponseCode } from 'config/constants'
 
@@ -75,7 +77,20 @@ const createAxiosInstance = (config, interceptors) => {
   return instance
 }
 
-const serve = createAxiosInstance({
-  baseURL: '/api',
-})
+const serve = createAxiosInstance(
+  {
+    baseURL: '/api',
+  },
+  {
+    requestInterceptors: [
+      (config) => {
+        const token = load(TOKEN_KEY)
+        if (token) {
+          config.headers.Authorization = token
+        }
+        return config
+      },
+    ],
+  },
+)
 export default serve

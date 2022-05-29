@@ -50,9 +50,9 @@
     <div class="images_wrapper">
       <img v-for="(image, index) in goodDetail.goodInfoImgs" :key="image" :src="image" alt="" @click="previewImg(index, 'info')" />
     </div>
-    <!-- <div id="scrollRecommend" class="recommend"></div> -->
+    <div id="scrollRecommend" class="recommend"></div>
     <div class="good_detail_actionBar">
-      <GoodActionBar></GoodActionBar>
+      <GoodActionBar :collected="hasCollected" :shopping-count="shoppingCarCount" @click-bar="handleClickActionBar"></GoodActionBar>
     </div>
   </div>
   <div v-else-if="loading === LoadStatus.ERROR">error</div>
@@ -64,47 +64,44 @@
 
   <van-share-sheet v-model:show="showShare" title="立即分享给好友" :options="options" @select="onSelect" />
   <div class="actionbar">
-    <van-action-sheet v-model:show="showAction">
-      <div class="total">
-        <div class="num">
-          <div class="left">数量</div>
-          <div class="right"><Stepper v-model="num"></Stepper></div>
-        </div>
-        <van-button type="primary" size="small" block round color="#00AFEC" @click="addOrder">确定</van-button>
-      </div>
-    </van-action-sheet>
-    <div v-show="false" ref="qr">
-      <qrcodevue :value="url" level="L" size="75" />
-    </div>
+    <AddGoodBar v-model:visible="addGoodBarVisible" :loading="addCarLoading" @submit="handleAddCar"></AddGoodBar>
   </div>
 </template>
 <script setup>
-import { ref, watch } from 'vue'
-import { Stepper, ActionSheet as vanActionSheet, ImagePreview, Swipe as vanSwipe, SwipeItem as vanSwipeItem, ShareSheet as vanShareSheet, Toast, Button as vanButton, Notify } from 'vant'
-import { useRouter, useRoute } from 'vue-router'
+import { ref, watch, computed } from 'vue'
+import { ImagePreview, Swipe as vanSwipe, SwipeItem as vanSwipeItem, ShareSheet as vanShareSheet, Toast, Notify } from 'vant'
+import { useRouter, useRoute, onBeforeRouteLeave } from 'vue-router'
 import { useStore } from 'vuex'
-import qrcodevue from 'qrcode.vue'
-import { requestGoodDetail } from 'server/good'
+import { requestGoodDetail, requestCollect } from 'server/good'
 import { ResponseCode, LoadStatus } from 'config/constants'
 import commentVue from 'components/comment/comment'
-import GoodActionBar from './children/GoodActionBar'
+import AddGoodBar from 'components/add_to_car_bar/AddGoodBar'
+import { requestAddShopCar } from 'server/shopping_car'
+import GoodActionBar, { ClickType } from './children/GoodActionBar'
 import commentDetailVue from '../comment_detail'
 
 const router = useRouter()
 const store = useStore()
 const route = useRoute()
 
-const comments = ref([])
+const loginStatus = computed(() => store.state.isLogin)
+const goodId = computed(() => route.params.id)
 const goodDetail = ref(null)
+const hasCollected = ref(false)
+let collecting = false
 const loading = ref(LoadStatus.LOADING)
+
+const comments = ref([])
 const fullScreen = ref(false)
-const showAction = ref(false)
+const shoppingCarCount = ref(0)
+const addGoodBarVisible = ref(false)
+const addCarLoading = ref(false)
 const num = ref(1)
 const qr = ref(null)
-const url = ref(location.href)
+const url = ref(window.location.href)
 
-watch(
-  () => route.params.id,
+const stopWatchGoodId = watch(
+  goodId,
   async (newId) => {
     if (!newId) {
       router.push({
@@ -114,22 +111,72 @@ watch(
     }
 
     loading.value = LoadStatus.LOADING
-    const result = await requestGoodDetail(newId)
+    const result = await requestGoodDetail(newId, loginStatus.value)
     if (result.code === ResponseCode.SUCCESS) {
-      goodDetail.value = result.data
+      goodDetail.value = result.data.goodDetail
+      hasCollected.value = result.data.hasCollected
+      shoppingCarCount.value = result.data.shoppingCarCount
       loading.value = LoadStatus.SUCCESS
     } else {
       loading.value = LoadStatus.ERROR
       Notify(result.msg)
     }
-    // comments.value = await getComment({ id: route.params.id })
   },
   { immediate: true },
 )
+onBeforeRouteLeave(() => {
+  stopWatchGoodId()
+})
 
-const showAction1 = () => {
-  // console.log('1')
-  showAction.value = true
+const handleCollect = async () => {
+  if (collecting) {
+    return
+  }
+  collecting = true
+  const result = await requestCollect(goodId.value, !hasCollected.value)
+  if (result.code === ResponseCode.SUCCESS) {
+    hasCollected.value = result.data
+    Notify({
+      type: 'success',
+      message: hasCollected.value ? '收藏成功' : '取消收藏',
+    })
+  } else {
+    Notify(result.msg)
+  }
+  collecting = false
+}
+const handleAddCar = async (count) => {
+  addCarLoading.value = true
+  const result = await requestAddShopCar(goodId.value, count)
+  if (result.code === ResponseCode.SUCCESS) {
+    shoppingCarCount.value += count
+    addGoodBarVisible.value = false
+  } else {
+    Notify(result.msg)
+  }
+  addCarLoading.value = false
+}
+const handleClickActionBar = async (type) => {
+  if (!loginStatus.value) {
+    Notify({
+      type: 'success',
+      message: '请先登录',
+    })
+    router.push('/login')
+    return
+  }
+  switch (type) {
+    case ClickType.COLLECT:
+      handleCollect()
+      break
+    case ClickType.SHOPINGCAR:
+      router.push('/recommend')
+      break
+    case ClickType.ADD_SHOPINGCAR:
+      addGoodBarVisible.value = true
+      break
+    default:
+  }
 }
 
 const addOrder = () => {
@@ -139,17 +186,17 @@ const addOrder = () => {
     path: '/order',
   })
 }
-
 const toComment = () => {
   fullScreen.value = true
 }
-
 function navigation(id) {
   document.getElementById(id).scrollIntoView({ behavior: 'smooth' })
-  window.scrollBy({
-    top: -45,
-  })
+  // FIXME 较好的滑动效果但高度偶缺陷
+  // window.scrollBy({
+  //   top: -45,
+  // })
 }
+// 图片预览
 const previewImg = (index, type) => {
   ImagePreview({
     images: goodDetail.value[type === 'swipe' ? 'goodSwiperImgs' : 'goodInfoImgs'],
@@ -184,7 +231,7 @@ const onSelect = (option) => {
   }
   const input = document.createElement('input')
   document.body.appendChild(input)
-  input.setAttribute('value', location.href)
+  input.setAttribute('value', window.location.href)
   input.select()
   if (document.execCommand('copy')) {
     document.execCommand('copy')

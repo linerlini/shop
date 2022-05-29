@@ -5,7 +5,6 @@ export const INIT_LOGIN = 'initLogin'
 
 const actions = {
   [INIT_LOGIN]({ commit }, payload) {
-    console.log(payload)
     commit(UPDATE_TOKEN, { token: payload.token })
     commit(UPDATE_LOGIN_STATUS, { status: true })
     commit(`userModule/${UPDATE_USER}`, {
