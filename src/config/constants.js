@@ -24,3 +24,18 @@ export const GoodType = {
   FRUIT: '水果',
   VEGETABLES: '蔬菜',
 }
+export const OrderStatus = {
+  CONFIRM: '0',
+  FOR_PAYMENT: '1',
+  WAITDELIVER: '2',
+  FOR_GOODS: '3',
+  TO_EVALUATE: '4',
+  REFUND_ING: '5',
+  REFUND_END: '6',
+  SUCCESS: '7',
+}
+export const PayMethod = {
+  INTEGRAL: '1',
+  WECHAT: '2',
+  ALI: '3',
+}

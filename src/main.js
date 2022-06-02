@@ -16,7 +16,7 @@ requestAutoLogin()
     if (res.code === ResponseCode.SUCCESS) {
       const { data } = res
       const token = load(TOKEN_KEY)
-      await store.dispatch(INIT_LOGIN, { userInfo: data, token })
+      await store.dispatch(INIT_LOGIN, { userInfo: data.userInfo, token, coupons: data.coupons })
     } else {
       clear(TOKEN_KEY)
     }

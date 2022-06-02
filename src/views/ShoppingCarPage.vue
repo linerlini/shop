@@ -24,7 +24,7 @@
         </div>
       </div>
     </div>
-    <van-submit-bar button-color="#00AFEC" :price="totalPrice * 100" button-text="提交订单" :disabled="!ban" @submit="onSubmit">
+    <van-submit-bar button-color="#00AFEC" :price="totalPrice * 100" button-text="提交订单" @submit="handleSubmitOrder">
       <van-checkbox :model-value="hasSelecedAll" @click="handleSelectAll">全选</van-checkbox>
     </van-submit-bar>
   </div>
@@ -37,6 +37,8 @@ import { Checkbox as vanCheckbox, Icon as vanIcon, Empty as vanEmpty, Stepper as
 import { useRouter } from 'vue-router'
 import { requestShoppingCar, requestUpdateShopCarCount, requestRemoveGoodFromCar } from 'server/shopping_car'
 import { ResponseCode } from 'config/constants'
+import { UPDATE_FIELD } from 'store/modules/order'
+import { RouteName } from 'router/'
 import { add } from '../utils/index'
 
 const store = useStore()
@@ -104,9 +106,6 @@ async function handleRemoveCarItem() {
     Notify(result.msg)
   }
 }
-const ban = computed(() => {
-  return cartList.value.some((e) => e.isCheck === true)
-})
 
 const totalPrice = computed(() => {
   return cartList.value.reduce((sum, item) => {
@@ -118,12 +117,20 @@ const totalPrice = computed(() => {
   }, 0)
 })
 
-const onSubmit = () => {
-  const arr = cartList.value.filter((e) => e.isCheck)
-  store.commit('setOrders', arr)
-  router.push({
-    path: '/order',
+const handleSubmitOrder = () => {
+  const selectedArr = []
+  cartList.value.forEach((item) => {
+    const { uuid } = item
+    if (selectedList.value[uuid]) {
+      selectedArr.push({ ...item })
+    }
   })
+  if (selectedArr.length === 0) {
+    Notify('请先选择需要购买的商品')
+    return
+  }
+  store.commit(`orderModule/${UPDATE_FIELD}`, { selectedGoods: selectedArr })
+  router.push({ name: RouteName.CONFIRM_ORDER })
 }
 
 async function getShoppingCarData() {

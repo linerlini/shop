@@ -20,11 +20,14 @@ export default {
     state.address = value
   },
   [UPDATE_TOKEN](state, payload) {
-    localStorage.setItem(TOKEN_KEY, payload.token)
+    if (payload.token) {
+      localStorage.setItem(TOKEN_KEY, payload.token)
+    } else {
+      localStorage.removeItem(TOKEN_KEY)
+    }
     state.token = payload.token
   },
   [UPDATE_LOGIN_STATUS](state, payload) {
-    console.log(payload)
     state.isLogin = payload.status
   },
 }

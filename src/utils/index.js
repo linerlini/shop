@@ -17,3 +17,20 @@ export function add(v1, v2) {
 export function sub(v1, v2) {
   return add(v1, -1 * v2)
 }
+export const CouponTimeStatus = {
+  AVAILABLE: 'available',
+  OUT: 'out',
+  BEFORE: 'before',
+}
+export function validateCouponTime(startTime, endTime) {
+  const startTimeStamp = new Date(startTime).valueOf()
+  const endTimeStamp = new Date(endTime).valueOf()
+  const curTimeStamp = Date.now()
+  if (startTimeStamp > curTimeStamp) {
+    return CouponTimeStatus.BEFORE
+  }
+  if (endTimeStamp < curTimeStamp) {
+    return CouponTimeStatus.OUT
+  }
+  return CouponTimeStatus.AVAILABLE
+}

@@ -15,11 +15,11 @@ const userModule = {
     return { ...initState }
   },
   mutations: {
-    RESET_USER(state) {
+    [RESET_USER](state) {
       // eslint-disable-next-line no-unused-vars
       state = { ...initState }
     },
-    UPDATE_USER(state, payload) {
+    [UPDATE_USER](state, payload) {
       Object.keys(payload).forEach((key) => {
         state[key] = payload[key]
       })

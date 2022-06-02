@@ -64,7 +64,7 @@
 
   <van-share-sheet v-model:show="showShare" title="立即分享给好友" :options="options" @select="onSelect" />
   <div class="actionbar">
-    <AddGoodBar v-model:visible="addGoodBarVisible" :loading="addCarLoading" @submit="handleAddCar"></AddGoodBar>
+    <AddGoodBar v-model:visible="addGoodBarVisible" :loading="addCarLoading" @submit="handleActionBarSubmit"></AddGoodBar>
   </div>
 </template>
 <script setup>
@@ -77,6 +77,8 @@ import { ResponseCode, LoadStatus } from 'config/constants'
 import commentVue from 'components/comment/comment'
 import AddGoodBar from 'components/add_to_car_bar/AddGoodBar'
 import { requestAddShopCar } from 'server/shopping_car'
+import { UPDATE_FIELD } from 'store/modules/order'
+import { RouteName } from 'router/'
 import GoodActionBar, { ClickType } from './children/GoodActionBar'
 import commentDetailVue from '../comment_detail'
 
@@ -96,7 +98,6 @@ const fullScreen = ref(false)
 const shoppingCarCount = ref(0)
 const addGoodBarVisible = ref(false)
 const addCarLoading = ref(false)
-const num = ref(1)
 const qr = ref(null)
 const url = ref(window.location.href)
 
@@ -145,6 +146,8 @@ const handleCollect = async () => {
   }
   collecting = false
 }
+
+let actionType = ''
 const handleAddCar = async (count) => {
   addCarLoading.value = true
   const result = await requestAddShopCar(goodId.value, count)
@@ -156,6 +159,30 @@ const handleAddCar = async (count) => {
   }
   addCarLoading.value = false
 }
+const handleBuy = (count) => {
+  const formatData = {
+    goodId: goodId.value,
+    count,
+    goodDetail: {
+      imgURL: goodDetail.value.goodImg,
+      title: goodDetail.value.title,
+      price: goodDetail.value.price,
+      type: goodDetail.value.type,
+      goodType: goodDetail.value.goodType,
+    },
+  }
+  store.commit(`orderModule/${UPDATE_FIELD}`, { selectedGoods: [formatData] })
+
+  router.push({ name: RouteName.CONFIRM_ORDER })
+}
+const handleActionBarSubmit = (count) => {
+  if (actionType === ClickType.ADD_SHOPINGCAR) {
+    handleAddCar(count)
+  }
+  if (actionType === ClickType.BUY) {
+    handleBuy(count)
+  }
+}
 const handleClickActionBar = async (type) => {
   if (!loginStatus.value) {
     Notify({
@@ -165,6 +192,7 @@ const handleClickActionBar = async (type) => {
     router.push('/login')
     return
   }
+  actionType = type
   switch (type) {
     case ClickType.COLLECT:
       handleCollect()
@@ -173,19 +201,13 @@ const handleClickActionBar = async (type) => {
       router.push('/recommend')
       break
     case ClickType.ADD_SHOPINGCAR:
+    case ClickType.BUY:
       addGoodBarVisible.value = true
       break
     default:
   }
 }
 
-const addOrder = () => {
-  const arr = [{ ...goodDetail.value, num: num.value }]
-  store.commit('setOrders', arr)
-  router.push({
-    path: '/order',
-  })
-}
 const toComment = () => {
   fullScreen.value = true
 }
@@ -207,6 +229,7 @@ const previewImg = (index, type) => {
 const closeCommentAll = () => {
   fullScreen.value = false
 }
+
 const showShare = ref(false)
 const options = [
   { name: '微信', icon: 'wechat' },

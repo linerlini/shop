@@ -26,6 +26,7 @@ module.exports = {
       .set('views', computePath('src/views'))
       .set('server', computePath('src/server'))
       .set('hooks', computePath('src/hooks'))
+      .set('utils', computePath('src/utils'))
     config.resolve.extensions.add('.js').add('.css').add('.vue')
   },
 }

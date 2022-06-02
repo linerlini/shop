@@ -20,7 +20,6 @@ import GoodFlow from 'components/good_flow/GoodFlow'
 
 const activeCategory = ref(GoodType.FRUIT)
 const { goods, loadingMore, loadingError, finished, handleLoadMore } = useGoodList({ requestFunc: requestGoodList, goodType: activeCategory })
-handleLoadMore()
 </script>
 <style lang="scss" scoped>
 .page-wrapper {

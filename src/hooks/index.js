@@ -11,16 +11,15 @@ export function useGoodList({ requestFunc, searchText, type, goodType }) {
     error: false,
     msg: '',
   })
-  const count = ref(0)
+  const count = ref(-1)
   const finished = computed(() => {
-    return count.value === goods.value
+    return count.value === goods.value.length
   })
   async function handleLoadMore() {
     if (finished.value) {
       return
     }
     loadingMore.value = true
-    console.log(goodType)
     const result = await requestFunc({
       searchText: searchText ? searchText.value : '',
       type: type ? type.value : '',
@@ -43,7 +42,7 @@ export function useGoodList({ requestFunc, searchText, type, goodType }) {
     pageIndex.value = 0
     goods.value = []
     loadingMore.value = false
-    count.value = 0
+    count.value = -1
   }
   watch([searchText, type, goodType], () => {
     reset()
@@ -55,6 +54,7 @@ export function useGoodList({ requestFunc, searchText, type, goodType }) {
     loadingError,
     finished,
     handleLoadMore,
+    count,
   }
 }
 export const a = 1

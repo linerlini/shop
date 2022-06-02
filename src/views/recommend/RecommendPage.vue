@@ -48,7 +48,6 @@ async function initData() {
     Notify(result.msg)
   }
 }
-handleLoadMore()
 initData()
 </script>
 <style lang="scss" scoped>

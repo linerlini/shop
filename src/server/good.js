@@ -9,6 +9,11 @@ export async function requestGoodDetail(id, login) {
   })
   return result.data
 }
+export async function requestGoodList(params) {
+  const result = await serve.post('/good/list', params)
+  return result.data
+}
+
 export async function requestHasCollected(id) {
   const result = await serve.get('/good/collected/has', {
     params: {
@@ -26,7 +31,7 @@ export async function requestCollect(id, collected) {
   })
   return result.data
 }
-export async function requestGoodList(params) {
-  const result = await serve.post('/good/list', params)
+export async function requestCollectionList(params) {
+  const result = await serve.post('/good/collect/list', params)
   return result.data
 }

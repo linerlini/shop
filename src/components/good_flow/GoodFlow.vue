@@ -1,17 +1,15 @@
 <template>
-  <PullRefresh :disabled="true">
-    <List :loading="loadingMore" :error="loadingError.error" :finished="finished" :error-text="loadingError.msg" :immediate-check="false" @load="handleLoadMore">
-      <div class="flow-wrapper" @click="handleClickCard">
-        <GoodCard v-for="item in props.goods" :key="item.uuid" v-bind="item"></GoodCard>
-      </div>
-    </List>
-  </PullRefresh>
+  <VFlow :finished="finished" :loading-more="loadingMore" :loading-error="loadingError" @load-more="handleLoadMore">
+    <div class="flow-wrapper" @click="handleClickCard">
+      <GoodCard v-for="item in props.goods" :key="item.uuid" v-bind="item"></GoodCard>
+    </div>
+  </VFlow>
 </template>
 
 <script setup>
-import { PullRefresh, List } from 'vant'
 import { useRouter } from 'vue-router'
 import GoodCard from 'components/good_card/GoodCard'
+import VFlow from './VFlow'
 
 const router = useRouter()
 
@@ -49,10 +47,6 @@ const emit = defineEmits(['loadMore', 'refresh'])
 function handleLoadMore() {
   emit('loadMore')
 }
-// function handleRefresh() {
-//   emit('refresh')
-// }
-
 function handleClickCard(event) {
   const target = event.target.closest('.card-wrapper')
   if (!target) {

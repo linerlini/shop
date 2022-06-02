@@ -1,9 +1,5 @@
 <template>
   <div class="my-container">
-    <!-- <div class="user-head" @click="toUser">
-      <div class="avatar"><img :src="defaultAvatar" /></div>
-      <div class="uname">登录/注册</div>
-    </div> -->
     <div class="user-head" @click="toUser">
       <div class="avatar">
         <img :src="defaultAvatar" />
@@ -11,13 +7,13 @@
       <div class="uname">haha</div>
     </div>
     <div class="order-state" @click="toOrderDetail">
-      <div class="item" v-for="(item, index) in orderStates" :key="index" >
+      <div v-for="(item, index) in orderStates" :key="index" class="item">
         <van-icon class="icon" :name="item.icon" />
         <div class="name">{{ item.label }}</div>
       </div>
     </div>
     <div class="menu-list">
-      <div class="item" v-for="(item, index) in menuList" :key="index" @click="toPath(item.to)">
+      <div v-for="(item, index) in menuList" :key="index" class="item" @click="toPath(item.to)">
         <van-icon class="icon" :name="item.icon" />
         <span class="tit">{{ item.title }}</span>
         <span class="arrow-right"><van-icon name="arrow" /></span>
@@ -38,22 +34,23 @@ const orderStates = ref([
   { label: '待付款', icon: 'balance-pay' },
   { label: '待发货', icon: 'logistics' },
   { label: '待收货', icon: 'peer-pay' },
-  { label: '待评价', icon: 'flower-o' }
+  { label: '待评价', icon: 'flower-o' },
 ])
 const menuList = ref([
   { title: '收货地址', icon: 'location-o', to: '/address' },
-  { title: '我的收藏', icon: 'star-o', to: '/favor' },
-  { title: '设置', icon: 'setting-o', to: '/setting' }
+  { title: '我的收藏', icon: 'star-o', to: '/collection' },
+  { title: '我的优惠卷', icon: 'setting-o', to: '/coupon' },
+  { title: '设置', icon: 'setting-o', to: '/setting' },
 ])
 
 const toPath = (path) => {
   router.push({
-    path
+    path,
   })
 }
 const toOrderDetail = () => {
   router.push({
-    path: '/orderdetail'
+    path: '/orderdetail',
   })
 }
 </script>
@@ -63,11 +60,12 @@ const toOrderDetail = () => {
   position: fixed;
   width: 100%;
   height: 100%;
+  z-index: 2000;
   background-color: rgb(246, 246, 246);
 }
 .user-head {
   padding: 37px 15px 57px 15px;
-  background: rgb(0,175,236);
+  background: rgb(0, 175, 236);
   color: #fff;
   .avatar {
     display: inline-block;

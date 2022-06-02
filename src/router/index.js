@@ -3,9 +3,23 @@ import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
 import store from 'store/index'
 import { Toast } from 'vant'
+import { OrderStatus } from 'config/constants'
 
 export const RouteName = {
   RECOMMEND: 'recommend',
+  ADDRESS_LIST: 'addressList',
+  ADDRESS_EDIT: 'addressEdit',
+  COLLECTION: 'collection',
+  GOOD: 'good',
+  COUPON: 'coupon',
+  LOGIN: 'login',
+  EDIT_PROFILE: 'editProfile',
+  CONFIRM_ORDER: 'confirmOrder',
+  ORDER_LIST: 'orderList',
+  ORDER_WAIT_SEND: OrderStatus.WAITDELIVER,
+  ORDER_WAIT_RECEIVE: OrderStatus.FOR_GOODS,
+  ORDER_WAIT_COMMENT: OrderStatus.TO_EVALUATE,
+  ORDER_WAIT_PAY: OrderStatus.FOR_PAYMENT,
 }
 const routes = [
   {
@@ -40,36 +54,129 @@ const routes = [
     },
   },
   {
-    path: '/wode',
-    component: () => import(/* webpackChunkName: "wode" */ '../views/wode.vue'),
+    path: '/profile',
+    component: () => import(/* webpackChunkName: "wode" */ 'views/profile/ProfilePage'),
+  },
+  {
+    path: '/edit',
+    name: RouteName.EDIT_PROFILE,
+    component: () => import(/* webpackChunkName: "wode" */ 'views/profile/EditProfilePage'),
+    beforeEnter(to, from, next) {
+      if (store.state.isLogin) {
+        next()
+      } else {
+        Toast('请先登录')
+        next({
+          path: '/login',
+        })
+      }
+    },
   },
   {
     path: '/login',
+    name: RouteName.LOGIN,
     component: () => import(/* webpackChunkName: "login" */ 'views/LoginPage'),
   },
   {
     path: '/register',
-    component: () => import(/* webpackChunkName: "register" */ '../views/RegisterPage.vue'),
-  },
-  {
-    path: '/orderdetail',
-    component: () => import(/* webpackChunkName: "orderdetail" */ '../views/orderdetail.vue'),
-  },
-  {
-    path: '/order',
-    component: () => import(/* webpackChunkName: "order" */ '../views/order.vue'),
+    component: () => import(/* webpackChunkName: "register" */ 'views/RegisterPage'),
   },
   {
     path: '/address',
-    component: () => import(/* webpackChunkName: "address" */ 'views/AddressPage'),
+    component: () => import(/* webpackChunkName: "address" */ 'views/address/AddressLayout'),
+    children: [
+      {
+        path: '',
+        name: RouteName.ADDRESS_LIST,
+        component: () => import(/* webpackChunkName: "address" */ 'views/address/AddressListPage'),
+      },
+      {
+        path: 'edit/:id',
+        name: RouteName.ADDRESS_EDIT,
+        component: () => import(/* webpackChunkName: "address" */ 'views/address/EditAddressPage'),
+      },
+    ],
+    beforeEnter(to, from, next) {
+      if (store.state.isLogin) {
+        next()
+      } else {
+        Toast('请先登录以查看地址信息')
+        next({
+          path: '/login',
+        })
+      }
+    },
   },
   {
-    path: '/favor',
-    component: () => import(/* webpackChunkName: "favor" */ '../views/favor.vue'),
+    path: '/collection',
+    component: () => import(/* webpackChunkName: "favor" */ 'views/collect/CollectionsPage'),
+    beforeEnter(to, from, next) {
+      if (store.state.isLogin) {
+        next()
+      } else {
+        Toast('请先登录以查看收藏信息')
+        next({
+          path: '/login',
+        })
+      }
+    },
+    name: RouteName.COLLECTION,
   },
   {
     path: '/good/:id',
     component: () => import(/* webpackChunkName: "goodDetail" */ 'views/good_detail/GoodDetailPage'),
+    name: RouteName.GOOD,
+  },
+  {
+    path: '/coupon',
+    component: () => import(/* webpackChunkName: "goodDetail" */ 'views/coupon/CouponPage'),
+    name: RouteName.COUPON,
+    beforeEnter(to, from, next) {
+      if (store.state.isLogin) {
+        next()
+      } else {
+        Toast('请先登录以查看地址信息')
+        next({
+          path: '/login',
+        })
+      }
+    },
+  },
+  {
+    path: '/orderdetail',
+    component: () => import(/* webpackChunkName: "goodDetail" */ 'views/order/OrderDetailLayout'),
+    beforeEnter(to, from, next) {
+      if (store.state.isLogin) {
+        next()
+      } else {
+        Toast('请先登录')
+        next({
+          path: '/login',
+        })
+      }
+    },
+    children: [
+      {
+        path: 'confirm',
+        name: RouteName.CONFIRM_ORDER,
+        component: () => import('views/order/ConfirmOrderDetail'),
+      },
+    ],
+  },
+  {
+    path: '/orderlist',
+    name: RouteName.ORDER_LIST,
+    component: () => import(/* webpackChunkName: "goodDetail" */ 'views/order/OrderListPage'),
+    beforeEnter(to, from, next) {
+      if (store.state.isLogin) {
+        next()
+      } else {
+        Toast('请先登录')
+        next({
+          path: '/login',
+        })
+      }
+    },
   },
 ]
 
