@@ -1,7 +1,7 @@
 <template>
   <VFlow :finished="finished" :loading-more="loadingMore" :loading-error="loadingError" @load-more="handleLoadMore">
     <div class="flow-wrapper">
-      <OrderCard v-for="order in orders" :key="order.uuid" :order-id="order.uuid" :total="order.total" :status="order.status" :goods="order.goods"> </OrderCard>
+      <OrderCard v-for="order in orders" :key="order.uuid" :order-id="order.uuid" :total="order.total" :status="order.status" :goods="order.goods" @cancel="handleCancelOrder(order.uuid)"> </OrderCard>
     </div>
   </VFlow>
 </template>
@@ -35,10 +35,14 @@ defineProps({
     },
   },
 })
-const emit = defineEmits(['loadMore', 'clickGoodImg', 'delete'])
+const emit = defineEmits(['loadMore', 'clickGoodImg', 'delete', 'cancel'])
 
 function handleLoadMore() {
   emit('loadMore')
+}
+
+function handleCancelOrder(id) {
+  emit('cancel', id)
 }
 </script>
 <style lang="scss" scoped>

@@ -77,7 +77,7 @@ const addressModule = {
   },
   getters: {
     selectedAddressInfo(state) {
-      return state.addressList.find((item) => item.uuid === state.selectedAddressID) || {}
+      return state.addressList.find((item) => item.uuid === state.selectedAddressID)
     },
   },
 }

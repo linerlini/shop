@@ -1,7 +1,7 @@
 <template>
   <div class="confirm-page">
     <div class="content">
-      <AddressBar v-bind="address" @click="handleClickAddress"></AddressBar>
+      <AddressBar v-bind="address"></AddressBar>
       <OrderDetailCard>
         <template #title>商品列表</template>
         <div class="card-list">
@@ -22,64 +22,48 @@
         <div class="cell-list">
           <Cell title="合计" :value="totalGoodPrice"></Cell>
           <Cell title="优惠卷" arrow-direction :value="discountAmount ? `-${discountAmount}元` : '未使用'"></Cell>
+          <Cell title="支付方式" value="零钱"></Cell>
           <Cell title="实付" :value="finalAmount"></Cell>
         </div>
       </OrderDetailCard>
       <OrderDetailCard>
-        <template #title>支付方式</template>
+        <template #title>订单信息</template>
         <div class="methods">
-          <RadioGroup v-model="payMethod">
-            <Cell title="零钱" size="large" icon="wechat-pay">
-              <template #right-icon><Radio name="1"></Radio></template>
-            </Cell>
-            <Cell title="微信" size="large" icon="wechat-pay">
-              <template #right-icon><Radio name="2" disabled></Radio></template>
-            </Cell>
-            <Cell title="支付宝" size="large" icon="wechat-pay">
-              <template #right-icon><Radio name="3" disabled></Radio></template>
-            </Cell>
-          </RadioGroup>
+          <Cell title="留言" :value="leaveMessage || '暂无'"></Cell>
+          <Cell title="订单编号" :value="orderId.slice(0, 8)"></Cell>
+          <Cell title="下单时间" :value="createdTime"></Cell>
         </div>
       </OrderDetailCard>
       <OrderDetailCard>
-        <template #title>商家留言</template>
+        <template #title>退款信息</template>
         <div class="methods">
-          <Field v-model="leaveMessage" label="留言"></Field>
+          <Cell title="原因" :value="refundReason"></Cell>
         </div>
       </OrderDetailCard>
     </div>
-    <SubmitBar :loading="submitLoading" :disabled="!address" :price="finalAmount * 100" class="submit-bar" button-text="付款" @submit="handleSubmitOrder"></SubmitBar>
+    <div class="button-group">
+      <Button v-if="route.name === RouteName.ORDER_REFUNDING" round text="取消退款" type="danger" @click="handleCancelRefund"></Button>
+      <Button round :text="mainButtonText" type="primary" @click="handleClickMainButton"></Button>
+    </div>
   </div>
 </template>
 
 <script setup>
 import { RouteName } from 'router/'
-import { UPDATE_FIELD } from 'store/modules/address'
-import { sub, add } from 'utils/'
-import { SubmitBar, Card, Cell, Radio, RadioGroup, Tag, Field, Notify, Toast } from 'vant'
-import { computed, ref, watch } from 'vue'
-import { useRoute, useRouter, onBeforeRouteLeave } from 'vue-router'
-import { useStore } from 'vuex'
-import { requestOrderDetail, requestPay } from 'server/order'
-import { PayMethod, ResponseCode } from 'config/constants'
+import { sub, add, formatTime } from 'utils/'
+import { Card, Cell, Tag, Notify, Toast, Button } from 'vant'
+import { computed, ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { requestCancelRefund, requestOrderDetail, requestRefundSucess } from 'server/order'
+import { ResponseCode } from 'config/constants'
 import AddressBar from './children/AddressBar'
 import OrderDetailCard from './children/OrderDetailCard'
 
 const router = useRouter()
 const route = useRoute()
-const store = useStore()
+const orderId = computed(() => route.query.id || '')
 
 const address = ref({})
-watch(
-  () => store.getters[`addressModule/selectedAddressInfo`],
-  (value) => {
-    address.value = value
-  },
-)
-function handleClickAddress() {
-  store.commit(`addressModule/${UPDATE_FIELD}`, { isChoosingAddress: true })
-  router.push({ name: RouteName.ADDRESS_LIST })
-}
 
 const goods = ref([])
 function handleClickCard(id) {
@@ -103,25 +87,58 @@ const discountAmount = computed(() => {
   return sub(totalGoodPrice.value, finalAmount.value)
 })
 
-const payMethod = ref(PayMethod.INTEGRAL)
-
 const leaveMessage = ref('')
+const createdTime = ref('')
+const refundReason = ref('')
 
-const submitLoading = ref(false)
-async function handleSubmitOrder() {
-  submitLoading.value = true
-  const result = await requestPay(route.query.id, address.value.uuid ? address.value : null)
+async function handleRefundSucess() {
+  Toast({
+    type: 'loading',
+    message: '正在处理',
+    duration: 0,
+  })
+  const result = await requestRefundSucess(orderId.value)
   if (result.code === ResponseCode.SUCCESS) {
-    Notify({ type: 'success', message: '付款成功' })
-    router.replace({
-      name: RouteName.ORDER_WAIT_SEND,
-      query: { id: route.query.id },
-    })
+    Notify({ type: 'success', message: '退款成功' })
+    router.replace({ name: RouteName.ORDER_REFUND_END, query: { id: orderId.value } })
   } else {
     Notify(result.msg)
   }
-  submitLoading.value = false
+  Toast.clear()
 }
+async function handleCancelRefund() {
+  Toast({
+    type: 'loading',
+    message: '正在处理',
+    duration: 0,
+  })
+  const result = await requestCancelRefund(orderId.value)
+  if (result.code === ResponseCode.SUCCESS) {
+    Notify({ type: 'success', message: '取消成功' })
+    router.replace({ name: RouteName.ORDER_LIST })
+  } else {
+    Notify(result.msg)
+  }
+  Toast.clear()
+}
+async function handleClickMainButton() {
+  const { name } = route
+
+  if (name === RouteName.ORDER_REFUNDING) {
+    handleRefundSucess()
+  } else {
+    router.replace({
+      name: RouteName.RECOMMEND,
+    })
+  }
+}
+const mainButtonText = computed(() => {
+  const { name } = route
+  if (name === RouteName.ORDER_REFUNDING) {
+    return '提醒退款'
+  }
+  return '再来一单'
+})
 
 async function initData() {
   const { id } = route.query
@@ -136,33 +153,23 @@ async function initData() {
   })
   const result = await requestOrderDetail(id)
   if (result.code === ResponseCode.SUCCESS) {
-    const { name, addressDetail, tel, leaveMessage: lm, goods: gs, total } = result.data
-    const selectedAddress = store.getters[`addressModule/selectedAddressInfo`]
-    if (selectedAddress) {
-      address.value = {
-        ...selectedAddress,
-      }
-    } else {
-      address.value = {
-        addressDetail,
-        name,
-        tel,
-      }
+    const { name, refundReason: reason, addressDetail, tel, leaveMessage: lm, goods: gs, total, createdAt } = result.data
+    address.value = {
+      addressDetail,
+      name,
+      tel,
     }
-
     leaveMessage.value = lm
     goods.value = gs
     finalAmount.value = total
+    createdTime.value = formatTime(createdAt)
+    refundReason.value = reason
   } else {
     Notify(result.msg)
     router.back()
   }
   Toast.clear()
 }
-
-onBeforeRouteLeave(() => {
-  store.commit(`addressModule/${UPDATE_FIELD}`, { selectedAddressID: '' })
-})
 initData()
 </script>
 <style lang="scss" scoped>
@@ -180,9 +187,16 @@ initData()
       margin-bottom: 20px;
     }
   }
-  .submit-bar {
+  .button-group {
     flex: 0;
-    position: static !important;
+    text-align: end;
+    padding: 8px 10px 8px 0;
+    > button {
+      width: 90px;
+      & + button {
+        margin-left: 8px;
+      }
+    }
   }
 }
 </style>

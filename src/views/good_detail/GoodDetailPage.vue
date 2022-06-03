@@ -27,7 +27,6 @@
         <div class="name">{{ goodDetail.title }}</div>
       </div>
     </div>
-
     <div id="scrollComment" class="comment">
       <div class="title">
         <h3 class="left">评论</h3>
@@ -303,11 +302,10 @@ const back = () => {
 }
 
 .good_detail {
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 2000;
-  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
   // height: 100%;
   background-color: rgb(242, 242, 242);
   .recommend {

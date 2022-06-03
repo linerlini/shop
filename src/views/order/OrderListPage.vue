@@ -5,7 +5,7 @@
       <Tab v-for="item in tabList" :key="item.name" :title="item.title" :name="item.name"></Tab>
     </Tabs>
     <div class="content">
-      <OrderCardFlow :orders="goods" :finished="finished" :loading-more="loadingMore" :lodaing-error="loadingError"></OrderCardFlow>
+      <OrderCardFlow :orders="goods" :finished="finished" :loading-more="loadingMore" :lodaing-error="loadingError" @cancel="handleCancelOrder"></OrderCardFlow>
     </div>
   </div>
 </template>
@@ -52,6 +52,15 @@ const { goods, loadingMore, loadingError, finished, handleLoadMore, count } = us
   type: activeOrderStatus,
 })
 handleLoadMore()
+
+function handleCancelOrder(id) {
+  if (activeOrderStatus.value === 'all') {
+    return
+  }
+  count.value -= 1
+  const targetIndex = goods.value.findIndex((item) => item.uuid === id)
+  goods.value.splice(targetIndex, 1)
+}
 </script>
 <style lang="scss" scoped>
 .page-wrapper {

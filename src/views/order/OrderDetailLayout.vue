@@ -24,6 +24,7 @@ const titleMap = {
   [OrderStatus.TO_EVALUATE]: '待评价',
   [OrderStatus.REFUND_ING]: '退款中',
   [OrderStatus.REFUND_END]: '已退款',
+  [OrderStatus.SUCCESS]: '交易成功',
 }
 const pageTitle = computed(() => {
   const { name } = route

@@ -48,9 +48,8 @@
 
 <script setup>
 import { OrderStatus, ResponseCode } from 'config/constants'
-import { status } from 'nprogress'
 import { RouteName } from 'router/'
-import { requestPay, requestReceiveGood, requestSendGood } from 'server/order'
+import { requestCancelOrder, requestPay, requestCancelRefund, requestReceiveGood, requestSendGood, requestRefundSucess } from 'server/order'
 import { Card, Tag, Button, Toast, Notify } from 'vant'
 import { useRouter } from 'vue-router'
 
@@ -76,13 +75,14 @@ const props = defineProps({
     },
   },
 })
+const emit = defineEmits(['cancel'], ['refund'])
 const subTitleMap = {
   [OrderStatus.WAITDELIVER]: '等待发货',
   [OrderStatus.FOR_GOODS]: '等待收货',
   [OrderStatus.FOR_PAYMENT]: '等待买家付款',
   [OrderStatus.REFUND_ING]: '等待退款处理',
   [OrderStatus.REFUND_END]: '退款完成',
-  [OrderStatus.TO_EVALUATE]: '交易成功',
+  [OrderStatus.TO_EVALUATE]: '等待评价',
   [OrderStatus.SUCCESS]: '交易成功',
 }
 
@@ -146,6 +146,21 @@ async function handleReceive() {
   }
   Toast.clear()
 }
+async function handleRefundSucess() {
+  Toast({
+    type: 'loading',
+    message: '正在处理',
+    duration: 0,
+  })
+  const result = await requestRefundSucess(props.orderId)
+  if (result.code === ResponseCode.SUCCESS) {
+    Notify({ type: 'success', message: '退款成功' })
+    router.replace({ name: RouteName.ORDER_REFUND_END, query: { id: props.orderId } })
+  } else {
+    Notify(result.msg)
+  }
+  Toast.clear()
+}
 function handleClickMainButton() {
   switch (props.status) {
     case OrderStatus.FOR_PAYMENT:
@@ -157,10 +172,79 @@ function handleClickMainButton() {
     case OrderStatus.FOR_GOODS:
       handleReceive()
       break
+    case OrderStatus.ORDER_WAIT_COMMENT:
+      router.push({ name: RouteName.ORDER_WAIT_COMMENT, query: { id: props.orderId } })
+      break
+    case OrderStatus.SUCCESS:
+      router.replace({
+        name: RouteName.RECOMMEND,
+      })
+      break
+    case OrderStatus.REFUND_ING:
+      handleRefundSucess()
+      break
+    case OrderStatus.REFUND_END:
+      router.replace({
+        name: RouteName.RECOMMEND,
+      })
+      break
     default:
   }
 }
-function handleClickSubButton() {}
+
+async function handleCancelOrder() {
+  Toast({
+    type: 'loading',
+    message: '正在取消订单',
+    duration: 0,
+  })
+  const result = await requestCancelOrder(props.orderId)
+  if (result.code === ResponseCode.SUCCESS) {
+    Notify('取消成功')
+    emit('cancel')
+  } else {
+    Notify(result.msg)
+  }
+  Toast.clear()
+}
+async function handleCancelRefund() {
+  Toast({
+    type: 'loading',
+    message: '正在处理',
+    duration: 0,
+  })
+  const result = await requestCancelRefund(props.orderId)
+  if (result.code === ResponseCode.SUCCESS) {
+    Notify({ type: 'success', message: '取消成功' })
+    emit('cancel')
+  } else {
+    Notify(result.msg)
+  }
+  Toast.clear()
+}
+function handleClickSubButton() {
+  switch (props.status) {
+    case OrderStatus.FOR_PAYMENT:
+      handleCancelOrder()
+      break
+    case OrderStatus.WAITDELIVER:
+      router.push({ name: RouteName.ORDER_WAIT_SEND, query: { id: props.orderId } })
+      break
+    case OrderStatus.FOR_GOODS:
+      router.push({ name: RouteName.ORDER_WAIT_RECEIVE, query: { id: props.orderId } })
+      break
+    case OrderStatus.TO_EVALUATE:
+      router.push({ name: RouteName.ORDER_WAIT_COMMENT, query: { id: props.orderId } })
+      break
+    case OrderStatus.SUCCESS:
+      router.push({ name: RouteName.ORDER_SUCESS, query: { id: props.orderId } })
+      break
+    case OrderStatus.REFUND_ING:
+      handleCancelRefund()
+      break
+    default:
+  }
+}
 
 function handleClickGood() {
   router.push({ name: props.status, query: { id: props.orderId } })
@@ -171,6 +255,7 @@ function handleClickGood() {
   background-color: white;
   border-radius: 8px;
   padding: 16px 16px;
+  margin-bottom: 20px;
   .title {
     display: flex;
     width: 100%;

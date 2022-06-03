@@ -34,3 +34,13 @@ export function validateCouponTime(startTime, endTime) {
   }
   return CouponTimeStatus.AVAILABLE
 }
+export function numberToStr(value) {
+  return value > 10 ? `${value}` : `0${value}`
+}
+export function formatTime(timeStr) {
+  const date = new Date(timeStr)
+  const year = date.getFullYear()
+  const month = date.getMonth() + 1
+  const day = date.getDate()
+  return `${year}-${numberToStr(month)}-${numberToStr(day)}`
+}

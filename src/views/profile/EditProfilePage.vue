@@ -77,11 +77,14 @@ async function handleSubmit() {
   data.append('avatar', formData.value.avatar[0].file)
   const result = await requestEditProfile(data)
   if (result.code === ResponseCode.SUCCESS) {
-    store.commit(`userModule/${UPDATE_USER}`, {
+    const newData = {
       name,
       desc,
-      avatar: result.data.avatar,
-    })
+    }
+    if (result.data.avatar) {
+      newData.avatar = result.data.avatar
+    }
+    store.commit(`userModule/${UPDATE_USER}`, newData)
     Notify({ type: 'success', message: '保存成功' })
   } else {
     Notify(result.msg)

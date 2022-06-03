@@ -75,7 +75,7 @@ async function handleUpdateGoodCount(id, value) {
     return
   }
   stepperLoadingMap.value[id] = true
-  const result = await requestUpdateShopCarCount(id, value)
+  const result = await requestUpdateShopCarCount(id, value || 1)
   if (result.code === ResponseCode.SUCCESS) {
     const target = cartList.value.find((item) => item.uuid === id)
     target.count = value

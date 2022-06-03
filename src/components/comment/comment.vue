@@ -1,19 +1,19 @@
 <template>
   <div class="comment1">
     <div class="first">
-      <img src="//img11.360buyimg.com/jdphoto/s40x40_jfs/t1/25255/18/10701/1678/5c89f892E78c04688/684d63c0d68e39b1.png">
-      <span class="username">{{props.comment.username}}</span>
-      <span class="rate" v-for="i in props.comment.rate" :key="i"></span>
-      <span class="date">{{props.comment.date.slice(0,10)}}</span>
+      <img src="//img11.360buyimg.com/jdphoto/s40x40_jfs/t1/25255/18/10701/1678/5c89f892E78c04688/684d63c0d68e39b1.png" />
+      <span class="username">{{ props.comment.username }}</span>
+      <span v-for="i in props.comment.rate" :key="i" class="rate"></span>
+      <span class="date">{{ props.comment.date.slice(0, 10) }}</span>
     </div>
-    <p class="second">{{props.comment.text}}</p>
+    <p class="second">{{ props.comment.text }}</p>
   </div>
 </template>
 <script setup>
 import { defineProps } from 'vue'
 
 const props = defineProps({
-  comment: Object
+  comment: Object,
 })
 </script>
 <style lang="scss" scoped>
@@ -43,11 +43,11 @@ const props = defineProps({
     line-height: 20px;
     margin: 0 auto;
     img {
-    border-radius: 50%;
-    height: 20px;
-    vertical-align: middle;
-    width: 20px;
-    margin-right: 10px;
+      border-radius: 50%;
+      height: 20px;
+      vertical-align: middle;
+      width: 20px;
+      margin-right: 10px;
     }
     .rate {
       display: inline-block;
@@ -59,7 +59,7 @@ const props = defineProps({
       &:before {
         background-image: url(//jstatic.3.cn/static/star.3fe1db83.png?__inline);
         background-size: cover;
-        content: "";
+        content: '';
         display: inline-block;
         height: 10px;
         margin-right: 2px;
@@ -73,6 +73,6 @@ const props = defineProps({
       float: right;
       margin-left: -60px;
     }
-    }
+  }
 }
 </style>

@@ -20,6 +20,9 @@ export const RouteName = {
   ORDER_WAIT_RECEIVE: OrderStatus.FOR_GOODS,
   ORDER_WAIT_COMMENT: OrderStatus.TO_EVALUATE,
   ORDER_WAIT_PAY: OrderStatus.FOR_PAYMENT,
+  ORDER_SUCESS: OrderStatus.SUCCESS,
+  ORDER_REFUNDING: OrderStatus.REFUND_ING,
+  ORDER_REFUND_END: OrderStatus.REFUND_END,
 }
 const routes = [
   {
@@ -160,6 +163,41 @@ const routes = [
         path: 'confirm',
         name: RouteName.CONFIRM_ORDER,
         component: () => import('views/order/ConfirmOrderDetail'),
+      },
+      {
+        path: 'waitsend',
+        name: RouteName.ORDER_WAIT_SEND,
+        component: () => import('views/order/OrderPostPage'),
+      },
+      {
+        path: 'waitpay',
+        name: RouteName.ORDER_WAIT_PAY,
+        component: () => import('views/order/OrderWaitPay'),
+      },
+      {
+        path: 'waitreceive',
+        name: RouteName.ORDER_WAIT_RECEIVE,
+        component: () => import('views/order/OrderPostPage'),
+      },
+      {
+        path: 'waitcomment',
+        name: RouteName.ORDER_WAIT_COMMENT,
+        component: () => import('views/order/OrderSuccess'),
+      },
+      {
+        path: 'sucess',
+        name: RouteName.ORDER_SUCESS,
+        component: () => import('views/order/OrderSuccess'),
+      },
+      {
+        path: 'refundwait',
+        name: RouteName.ORDER_REFUNDING,
+        component: () => import('views/order/OrderRefund'),
+      },
+      {
+        path: 'refundsucess',
+        name: RouteName.ORDER_REFUND_END,
+        component: () => import('views/order/OrderRefund'),
       },
     ],
   },

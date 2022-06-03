@@ -10,11 +10,18 @@ export async function requestOrderList(params) {
   return result.data
 }
 
-export async function requestPay(id) {
-  const result = await serve.get('/order/pay', {
+export async function requestOrderDetail(id) {
+  const result = await serve.get('/order/detail', {
     params: {
       id,
     },
+  })
+  return result.data
+}
+export async function requestPay(id, address) {
+  const result = await serve.post('/order/pay', {
+    id,
+    address,
   })
   return result.data
 }
@@ -28,6 +35,38 @@ export async function requestSendGood(id) {
 }
 export async function requestReceiveGood(id) {
   const result = await serve.get('/order/receive', {
+    params: {
+      id,
+    },
+  })
+  return result.data
+}
+export async function requestCancelOrder(id) {
+  const result = await serve.get('/order/cancel', {
+    params: {
+      id,
+    },
+  })
+  return result.data
+}
+export async function requestComment(params) {
+  const result = await serve.post('/order/comment', params)
+  return result.data
+}
+export async function requestRefund(params) {
+  const result = await serve.post('/order/refund', params)
+  return result.data
+}
+export async function requestCancelRefund(id) {
+  const result = await serve.get('/order/refund/cancel', {
+    params: {
+      id,
+    },
+  })
+  return result.data
+}
+export async function requestRefundSucess(id) {
+  const result = await serve.get('/order/refund/sucess', {
     params: {
       id,
     },

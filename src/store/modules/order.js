@@ -14,7 +14,6 @@ const orderModule = {
       Object.keys(payload).forEach((key) => {
         state[key] = payload[key]
       })
-      console.log(state)
     },
   },
 }

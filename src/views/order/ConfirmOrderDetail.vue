@@ -29,7 +29,7 @@
         <template #title>支付明细</template>
         <div class="cell-list">
           <Cell title="合计" :value="totalGoodPrice"></Cell>
-          <Cell title="优惠卷" arrow-direction :value="`-${discountAmount}元`" is-link @click="couponListVisible = true"></Cell>
+          <Cell title="优惠卷" arrow-direction :value="discountAmount ? `-${discountAmount}元` : '未使用'" is-link @click="couponListVisible = true"></Cell>
           <Cell title="实付" :value="finalAmount"></Cell>
         </div>
       </OrderDetailCard>
@@ -73,7 +73,7 @@ import { UPDATE_FIELD } from 'store/modules/address'
 import { sub, add } from 'utils/'
 import { SubmitBar, Card, Cell, Radio, RadioGroup, Tag, Field, Notify } from 'vant'
 import { computed, ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { onBeforeRouteLeave, useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import { requestCreateOrder } from 'server/order'
 import { OrderStatus, PayMethod, ResponseCode } from 'config/constants'
@@ -206,13 +206,23 @@ async function handleSubmitOrder() {
     if (finalAmount.value > integration) {
       Notify('余额不足')
     } else {
-      router.back()
+      Notify('付款成功')
+      router.replace({
+        name: RouteName.ORDER_WAIT_SEND,
+        query: {
+          id: result.data.uuid,
+        },
+      })
     }
   } else {
     Notify(result.msg)
   }
   submitLoading.value = false
 }
+
+onBeforeRouteLeave(() => {
+  store.commit(`addressModule/${UPDATE_FIELD}`, { selectedAddressID: '' })
+})
 </script>
 <style lang="scss" scoped>
 .confirm-page {
