@@ -73,7 +73,7 @@ import { UPDATE_FIELD } from 'store/modules/address'
 import { sub, add } from 'utils/'
 import { SubmitBar, Card, Cell, Radio, RadioGroup, Tag, Field, Notify } from 'vant'
 import { computed, ref } from 'vue'
-import { onBeforeRouteLeave, useRouter } from 'vue-router'
+import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import { requestCreateOrder } from 'server/order'
 import { OrderStatus, PayMethod, ResponseCode } from 'config/constants'
@@ -87,7 +87,8 @@ const store = useStore()
 
 const address = computed(() => store.getters['addressModule/selectedAddressInfo'])
 function handleClickAddress() {
-  store.commit(`addressModule/${UPDATE_FIELD}`, { isChoosingAddress: true })
+  const { uuid = '' } = address.value || {}
+  store.commit(`addressModule/${UPDATE_FIELD}`, { isChoosingAddress: true, selectedAddressID: uuid })
   router.push({ name: RouteName.ADDRESS_LIST })
 }
 
@@ -207,6 +208,7 @@ async function handleSubmitOrder() {
       Notify('余额不足')
     } else {
       Notify('付款成功')
+      store.commit(`addressModule/${UPDATE_FIELD}`, { selectedAddressID: '' })
       router.replace({
         name: RouteName.ORDER_WAIT_SEND,
         query: {
@@ -219,10 +221,6 @@ async function handleSubmitOrder() {
   }
   submitLoading.value = false
 }
-
-onBeforeRouteLeave(() => {
-  store.commit(`addressModule/${UPDATE_FIELD}`, { selectedAddressID: '' })
-})
 </script>
 <style lang="scss" scoped>
 .confirm-page {

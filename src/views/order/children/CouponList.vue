@@ -1,5 +1,5 @@
 <template>
-  <Popup :show="visible" round position="bottom" close-on-popstate :close-on-click-overlay="false" style="height: 80%; padding-top: 4px">
+  <Popup :show="visible" round position="bottom" close-on-popstate :close-on-click-overlay="true" style="height: 80%; padding-top: 4px">
     <CouponList
       ref="couponListRef"
       :chosen-coupon="chosenCouponIndex"

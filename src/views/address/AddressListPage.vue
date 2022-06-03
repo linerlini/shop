@@ -1,6 +1,13 @@
 <template>
   <div class="page-wrapper">
-    <AddressList v-if="loadStatus === LoadStatus.SUCCESS" :list="addressList" @click-item="handleClickAddressItem" @add="handleClickAdd" @edit="handleClickEdit"></AddressList>
+    <AddressList
+      v-if="loadStatus === LoadStatus.SUCCESS"
+      :model-value="selectedAddressId"
+      :list="addressList"
+      @click-item="handleClickAddressItem"
+      @add="handleClickAdd"
+      @edit="handleClickEdit"
+    ></AddressList>
     <Empty v-show="emptyStatusData.visible" :description="emptyStatusData.description"></Empty>
   </div>
 </template>
@@ -46,7 +53,10 @@ const handleClickAdd = () => {
 const handleClickEdit = (address) => {
   router.push({ name: RouteName.ADDRESS_EDIT, params: { id: address.uuid } })
 }
+const selectedAddressId = ref(store.state.addressModule.selectedAddressID)
 const handleClickAddressItem = (address) => {
+  selectedAddressId.value = address.id
+
   if (isChoosingAddress.value) {
     store.commit(`addressModule/${UPDATE_FIELD}`, {
       selectedAddressID: address.uuid,
@@ -70,7 +80,7 @@ async function initData() {
   if (result.code === ResponseCode.SUCCESS) {
     loadStatus.value = LoadStatus.SUCCESS
     store.commit(`addressModule/${UPDATE_FIELD}`, {
-      addressList: result.data.map((item) => ({ ...item, address: item.addressDetail })),
+      addressList: result.data.map((item) => ({ ...item, address: item.addressDetail, id: item.uuid })),
       addressListLoadStatus: LoadStatus.SUCCESS,
     })
   } else {

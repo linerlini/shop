@@ -149,7 +149,7 @@ async function handleRefund(value) {
       message: '成功发起退款',
     })
     refundSubmitLoading.value = false
-    router.push({
+    router.replace({
       name: RouteName.ORDER_REFUNDING,
       query: {
         id: orderId.value,

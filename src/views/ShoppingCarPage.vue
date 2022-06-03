@@ -129,6 +129,7 @@ const handleSubmitOrder = () => {
     Notify('请先选择需要购买的商品')
     return
   }
+  console.log(selectedArr)
   store.commit(`orderModule/${UPDATE_FIELD}`, { selectedGoods: selectedArr })
   router.push({ name: RouteName.CONFIRM_ORDER })
 }

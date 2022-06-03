@@ -28,6 +28,7 @@ const footerVisible = computed(() => {
     RouteName.ORDER_REFUNDING,
     RouteName.ORDER_REFUND_END,
     RouteName.GOOD,
+    RouteName.COMMENT,
   ].includes(route.name)
 })
 </script>

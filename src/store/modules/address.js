@@ -67,6 +67,7 @@ const addressModule = {
       Object.keys(payload).forEach((item) => {
         state[item] = payload[item]
       })
+      console.log(payload)
     },
     [RESET](state) {
       // eslint-disable-next-line no-unused-vars

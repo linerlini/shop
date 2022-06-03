@@ -23,6 +23,7 @@ export const RouteName = {
   ORDER_SUCESS: OrderStatus.SUCCESS,
   ORDER_REFUNDING: OrderStatus.REFUND_ING,
   ORDER_REFUND_END: OrderStatus.REFUND_END,
+  COMMENT: 'comment',
 }
 const routes = [
   {
@@ -205,6 +206,7 @@ const routes = [
     path: '/orderlist',
     name: RouteName.ORDER_LIST,
     component: () => import(/* webpackChunkName: "goodDetail" */ 'views/order/OrderListPage'),
+
     beforeEnter(to, from, next) {
       if (store.state.isLogin) {
         next()
@@ -215,6 +217,11 @@ const routes = [
         })
       }
     },
+  },
+  {
+    path: '/comment',
+    name: RouteName.COMMENT,
+    component: () => import(/* webpackChunkName: "goodDetail" */ 'views/good_detail/CommentPage'),
   },
 ]
 

@@ -97,7 +97,7 @@ async function handleComment(value) {
   submitLoading.value = true
   const result = await requestComment({
     orderId: orderId.value,
-    comment: value.commentMessage,
+    comment: value.comment,
     rate: value.rate,
     goodIds: goods.value.map((item) => item.uuid),
   })
@@ -107,7 +107,7 @@ async function handleComment(value) {
       message: '评论成功',
     })
     commentVisible.value = false
-    router.push({
+    router.replace({
       name: RouteName.ORDER_SUCESS,
       query: {
         id: orderId.value,

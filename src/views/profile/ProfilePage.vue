@@ -41,7 +41,7 @@ import { useStore } from 'vuex'
 import { RouteName } from 'router/'
 import { LOG_OUT } from 'store/actions'
 import { OrderStatus } from 'config/constants'
-import VAvatar from './children/VAvatar'
+import VAvatar from 'components/VAvatar'
 
 const store = useStore()
 const router = useRouter()
@@ -68,12 +68,6 @@ async function handleClickPopupButton() {
     await store.dispatch(LOG_OUT)
   }
   router.replace({ name: RouteName.LOGIN })
-}
-
-const toOrderDetail = () => {
-  router.push({
-    path: '/orderdetail',
-  })
 }
 </script>
 
