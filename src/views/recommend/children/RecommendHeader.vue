@@ -23,7 +23,7 @@
 import { Search as vanSearch, Overlay as VanOverlay } from 'vant'
 import { useRouter } from 'vue-router'
 import { ref } from 'vue'
-import qrcodeVue from 'components/qrcode/qrcode'
+import qrcodeVue from 'components/qrcode/myQrcode'
 
 const show = ref(false)
 const router = useRouter()

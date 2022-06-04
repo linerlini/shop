@@ -3,13 +3,13 @@
   <VanNoticeBar v-if="showNotice" scrollable background="#00AFEC" mode="closeable" text="尊敬的用户，欢迎您的到来！！"></VanNoticeBar>
   <div class="swiper-wrapper">
     <van-swipe :autoplay="3000">
-      <van-swipe-item v-for="item in swipeImages" :key="item.uuid" @click="handleClickSwipe(item.goodID)">
+      <van-swipe-item v-for="item in swipeImages" :key="item.uuid" @click="handleClickSwipe(item.goodId)">
         <img :src="item.imgURL" />
       </van-swipe-item>
     </van-swipe>
   </div>
   <div class="jieshao"></div>
-  <GoodFlow :goods="goods" :finished="finished" :loading-more="loadingMore" :loading-error="loadingError" @loadMore="handleLoadMore"></GoodFlow>
+  <GoodFlow :goods="goods" :finished="finished" :loading-more="loadingMore" :loading-error="loadingError" @load-more="handleLoadMore"></GoodFlow>
 </template>
 
 <script setup>

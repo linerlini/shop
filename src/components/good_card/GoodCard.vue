@@ -8,7 +8,7 @@
       <span style="font-size: 13.7322px">￥</span><span>{{ ~~props.price }}</span>
       <span style="font-size: 13.7322px">{{ ('.' + (props.price * 100 - 100 * ~~props.price)).padEnd(3, '0') }}</span>
     </span>
-    <img :data-img="index" class="icon" src="https://m.360buyimg.com/babel/s48x48_jfs/t1/126761/1/18665/5729/60af425cE207c7fdc/7605ddf95a621f6c.png.webp" alt="" @click.stop="emit('add', uuid)" />
+    <img class="icon" src="https://m.360buyimg.com/babel/s48x48_jfs/t1/126761/1/18665/5729/60af425cE207c7fdc/7605ddf95a621f6c.png.webp" alt="" @click.stop="emit('add', uuid)" />
   </div>
 </template>
 

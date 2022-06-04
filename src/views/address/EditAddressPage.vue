@@ -7,6 +7,7 @@
       :is-deleting="loadStatus.delete"
       :show-delete="actionType === ActionType.EDIT"
       :address-info="initAddressInfo"
+      :default-tag-text="默认"
       @save="handleSave"
       @delete="handleDelete"
     ></AddressEdit>

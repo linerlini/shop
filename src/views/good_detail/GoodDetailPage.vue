@@ -4,7 +4,7 @@
       <div class="header">
         <div class="back" @click="back"><span></span></div>
         <ul class="nav">
-          <li @click="navigation('scrollGood_detail')"><span>商品</span></li>
+          <li @click="navigation('scrollGood_detail1')"><span>商品</span></li>
           <li @click="navigation('scrollComment')"><span>评价</span></li>
           <li @click="navigation('scrollDetail')"><span>详情</span></li>
           <li @click="navigation('scrollRecommend')"><span>推荐</span></li>
@@ -12,7 +12,7 @@
         <div class="more" @click="showShare = true"><span></span></div>
       </div>
       <div class="main-content">
-        <div class="lunbotu">
+        <div id="scrollGood_detail1" class="lunbotu">
           <van-swipe :autoplay="3000">
             <van-swipe-item v-for="(image, index) in goodDetail.goodSwiperImgs" :key="image">
               <img :src="image" @click="previewImg(index, 'swipe')" />
@@ -74,6 +74,9 @@
   <div class="actionbar">
     <AddGoodBar v-model:visible="addGoodBarVisible" :loading="addCarLoading" @submit="handleActionBarSubmit"></AddGoodBar>
   </div>
+  <div v-show="false" ref="qr">
+    <qrcode-vue :value="url" level="L" size="75" />
+  </div>
 </template>
 <script setup>
 import { ref, watch, computed } from 'vue'
@@ -90,6 +93,7 @@ import { RouteName } from 'router/'
 import OrderDetailCard from 'views/order/children/OrderDetailCard'
 import { useGoodList } from 'hooks/'
 import GoodFlow from 'components/good_flow/GoodFlow'
+import qrcodeVue from 'qrcode.vue'
 import GoodActionBar, { ClickType } from './children/GoodActionBar'
 
 const router = useRouter()
