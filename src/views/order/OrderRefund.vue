@@ -56,11 +56,14 @@ import { computed, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { requestCancelRefund, requestOrderDetail, requestRefundSucess } from 'server/order'
 import { ResponseCode } from 'config/constants'
+import { useStore } from 'vuex'
+import { CHANGE_MOENY } from 'store/modules/user'
 import AddressBar from './children/AddressBar'
 import OrderDetailCard from './children/OrderDetailCard'
 
 const router = useRouter()
 const route = useRoute()
+const store = useStore()
 const orderId = computed(() => route.query.id || '')
 
 const address = ref({})
@@ -100,6 +103,7 @@ async function handleRefundSucess() {
   const result = await requestRefundSucess(orderId.value)
   if (result.code === ResponseCode.SUCCESS) {
     Notify({ type: 'success', message: '退款成功' })
+    store.commit(`userModule/${CHANGE_MOENY}`, { spend: finalAmount.value })
     router.replace({ name: RouteName.ORDER_REFUND_END, query: { id: orderId.value } })
   } else {
     Notify(result.msg)

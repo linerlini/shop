@@ -78,6 +78,7 @@ import { useStore } from 'vuex'
 import { requestCreateOrder } from 'server/order'
 import { OrderStatus, PayMethod, ResponseCode } from 'config/constants'
 import { USE } from 'store/modules/coupon'
+import { CHANGE_MOENY } from 'store/modules/user'
 import AddressBar from './children/AddressBar'
 import OrderDetailCard from './children/OrderDetailCard'
 import CouponList from './children/CouponList'
@@ -209,6 +210,7 @@ async function handleSubmitOrder() {
     } else {
       Notify('付款成功')
       store.commit(`addressModule/${UPDATE_FIELD}`, { selectedAddressID: '' })
+      store.commit(`userModule/${CHANGE_MOENY}`, { spend: finalAmount.value * -1 })
       router.replace({
         name: RouteName.ORDER_WAIT_SEND,
         query: {
