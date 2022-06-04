@@ -9,8 +9,9 @@
 
 <script setup>
 import { useRouter } from 'vue-router'
-import { Toast } from 'vant'
-import { ref } from 'vue'
+import { Notify, Toast } from 'vant'
+import { computed, ref } from 'vue'
+import { useStore } from 'vuex'
 import GoodCard from 'components/good_card/GoodCard'
 import AddGoodBar from 'components/add_to_car_bar/AddGoodBar'
 import { requestAddShopCar } from 'server/shopping_car'
@@ -18,7 +19,7 @@ import { ResponseCode } from 'config/constants'
 import VFlow from './VFlow'
 
 const router = useRouter()
-
+const store = useStore()
 const props = defineProps({
   goods: {
     type: Array,
@@ -65,9 +66,14 @@ function handleClickCard(event) {
 const addGoodBarVisible = ref(false)
 const addCarLoading = ref(false)
 let selectedGoodId = ''
+const isLogin = computed(() => store.state.isLogin)
 function handleAdd(uuid) {
-  selectedGoodId = uuid
-  addGoodBarVisible.value = true
+  if (isLogin.value) {
+    selectedGoodId = uuid
+    addGoodBarVisible.value = true
+  } else {
+    Notify('请先登录')
+  }
 }
 const handleAddCar = async (count) => {
   addCarLoading.value = true

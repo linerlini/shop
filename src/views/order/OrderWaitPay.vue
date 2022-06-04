@@ -62,6 +62,7 @@ import { useRoute, useRouter, onBeforeRouteLeave } from 'vue-router'
 import { useStore } from 'vuex'
 import { requestOrderDetail, requestPay } from 'server/order'
 import { PayMethod, ResponseCode } from 'config/constants'
+import { CHANGE_MOENY } from 'store/modules/user'
 import AddressBar from './children/AddressBar'
 import OrderDetailCard from './children/OrderDetailCard'
 
@@ -113,6 +114,7 @@ async function handleSubmitOrder() {
   const result = await requestPay(route.query.id, address.value.uuid ? address.value : null)
   if (result.code === ResponseCode.SUCCESS) {
     Notify({ type: 'success', message: '付款成功' })
+    store.commit(`userModule/${CHANGE_MOENY}`, { spend: finalAmount.value * -1 })
     router.replace({
       name: RouteName.ORDER_WAIT_SEND,
       query: { id: route.query.id },

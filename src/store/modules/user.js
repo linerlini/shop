@@ -1,3 +1,5 @@
+import { add } from 'utils/'
+
 const initState = {
   account: '',
   name: '尚未登录',
@@ -8,7 +10,7 @@ const initState = {
 // mutations
 export const RESET_USER = 'resetUser'
 export const UPDATE_USER = 'updateUser'
-
+export const CHANGE_MOENY = 'changeMoney'
 const userModule = {
   namespaced: true,
   state() {
@@ -23,6 +25,9 @@ const userModule = {
       Object.keys(payload).forEach((key) => {
         state[key] = payload[key]
       })
+    },
+    [CHANGE_MOENY](state, { spend }) {
+      state.integration = add(state.integration, spend)
     },
   },
 }

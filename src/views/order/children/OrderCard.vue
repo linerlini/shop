@@ -50,11 +50,13 @@
 import { OrderStatus, ResponseCode } from 'config/constants'
 import { RouteName } from 'router/'
 import { requestCancelOrder, requestPay, requestCancelRefund, requestReceiveGood, requestSendGood, requestRefundSucess } from 'server/order'
+import { CHANGE_MOENY } from 'store/modules/user'
 import { Card, Tag, Button, Toast, Notify } from 'vant'
 import { useRouter } from 'vue-router'
+import { useStore } from 'vuex'
 
 const router = useRouter()
-
+const store = useStore()
 const props = defineProps({
   orderId: {
     type: String,
@@ -95,6 +97,7 @@ async function handlePay() {
   const result = await requestPay(props.orderId)
   if (result.code === ResponseCode.SUCCESS) {
     Notify('付款成功')
+    store.commit(`userModule/${CHANGE_MOENY}`, { spend: props.total * -1 })
     router.push({
       name: RouteName.ORDER_WAIT_SEND,
       query: {
@@ -155,6 +158,7 @@ async function handleRefundSucess() {
   const result = await requestRefundSucess(props.orderId)
   if (result.code === ResponseCode.SUCCESS) {
     Notify({ type: 'success', message: '退款成功' })
+    store.commit(`userModule/${CHANGE_MOENY}`, { spend: props.total })
     router.replace({ name: RouteName.ORDER_REFUND_END, query: { id: props.orderId } })
   } else {
     Notify(result.msg)
